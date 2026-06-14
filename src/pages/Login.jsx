@@ -186,6 +186,27 @@ Earn points and dominate the leaderboard.
             }
             style={inputStyle}
           />
+<div
+  style={{
+    display: "flex",
+    justifyContent: "center",
+    marginTop: "-6px",
+    marginBottom: "15px"
+  }}
+>
+  <span
+    onClick={() =>
+      window.open("https://x.com/toneri404", "_blank")
+    }
+    style={{
+      color: "#9CA3AF",
+      fontSize: "14px",
+      cursor: "pointer"
+    }}
+  >
+    Forgot password? Contact admin
+  </span>
+</div>
 
           <button
             type="submit"

@@ -6,7 +6,7 @@ function Admin() {
 
   const [users, setUsers] = useState([]);
   const [userFilter, setUserFilter] =
-  useState("approved");
+  useState("pending");
 
   const [homeTeam, setHomeTeam] = useState("");
   const [awayTeam, setAwayTeam] = useState("");
@@ -559,15 +559,18 @@ const inputStyle = {
     <div>
 
       <Navbar />
-      <div
-  style={{
-    maxWidth: "1300px",
-    margin: "0 auto",
-    padding: "30px"
-  }}
-></div>
+    <div
+      className="page-container"
+    >
 
-      <h1>Admin Dashboard</h1>
+      <h1
+        style={{
+          textAlign: "center",
+          marginBottom: "30px"
+        }}
+      >
+        Admin Dashboard
+      </h1>
      {
   stats && (
 
@@ -719,25 +722,20 @@ const inputStyle = {
   !showProfile &&
   userFilter && (
 
-    allUsers
-      .filter(
-        user =>
-          user.status === userFilter
-      )
-      .map(user => (
+    <div className="admin-user-grid">
+
+      {
+        allUsers
+          .filter(
+            user =>
+              user.status === userFilter
+          )
+          .map(user => (
 
         <div
           key={user.id}
-style={{
-  background:"#0f172a",
-  border:"1px solid #374151",
-  borderRadius:"16px",
-  padding:"25px",
-  maxWidth:"500px",
-  margin:"0 auto 20px auto",
-  textAlign:"center",
-  boxShadow:"0 0 25px rgba(0,0,0,0.3)"
-}}
+
+className="admin-user-card"
         >
 
           <h3
@@ -884,7 +882,10 @@ style={{
 
         </div>
 
-      ))
+          ))
+      }
+
+    </div>
 
   )
 }
@@ -973,12 +974,11 @@ if (
 }
 
 if (
-  pred.actual_home_score !== null &&
-  pred.home_score ===
-    pred.actual_home_score &&
-  pred.away_score ===
-    pred.actual_away_score
-) {
+  pred.result &&
+  pred.prediction === pred.result &&
+  pred.home_score === pred.actual_home_score &&
+  pred.away_score === pred.actual_away_score
+){
 
   perfectBonus =
     pred.perfect_points ?? 5;
@@ -1157,7 +1157,7 @@ onClick={() => {
 
     <input
       type="text"
-      placeholder="Home Team"
+      placeholder="Home Team (please provide the full, official country names for the flags)"
       value={homeTeam}
       onChange={(e) =>
         setHomeTeam(e.target.value)
@@ -1167,7 +1167,7 @@ onClick={() => {
 
     <input
       type="text"
-      placeholder="Away Team"
+      placeholder="Away Team (please provide the full, official country names for the flags)"
       value={awayTeam}
       onChange={(e) =>
         setAwayTeam(e.target.value)
@@ -1743,7 +1743,9 @@ matches.map(match => (
       }
 
     </div>
-  );
+
+  </div>
+);
 }
 
 export default Admin;

@@ -9,8 +9,11 @@ const teamFlags = {
   Brazil: "BR",
   Canada: "CA",
   Colombia: "CO",
+  "Côte d'Ivoire": "CI",
+  "Ivory Coast": "CI",
   Croatia: "HR",
   Curacao: "CW",
+  Curaçao: "CW",
   Czechia: "CZ",
   Ecuador: "EC",
   Egypt: "EG",
@@ -46,6 +49,7 @@ const teamFlags = {
   Uzbekistan: "UZ",
   "New Zealand": "NZ",
   "Cape Verde": "CV",
+  "Cabo Verde": "CV",
   "DR Congo": "CD"
 };
 

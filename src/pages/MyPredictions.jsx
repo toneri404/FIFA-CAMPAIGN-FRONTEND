@@ -3,157 +3,126 @@ import Navbar from "../components/Navbar";
 import api from "../services/api";
 
 function MyPredictions() {
-
-  const [predictions, setPredictions] =
-    useState([]);
+  const [predictions, setPredictions] = useState([]);
 
   useEffect(() => {
     fetchPredictions();
   }, []);
 
   const fetchPredictions = async () => {
-
     try {
+      const token = localStorage.getItem("token");
 
-      const token =
-        localStorage.getItem("token");
+      const response = await api.get("/football/my-predictions", {
+        headers: {
+          Authorization: token
+        }
+      });
 
-      const response =
-        await api.get(
-          "/football/my-predictions",
-          {
-            headers: {
-              Authorization: token
-            }
-          }
-        );
-
-      setPredictions(
-        response.data.predictions
-      );
-
+      setPredictions(response.data.predictions);
     } catch (error) {
-
       console.error(error);
+    }
+  };
 
+  const getOutcome = (prediction) => {
+    if (!prediction.result) {
+      return {
+        text: "⏳ Pending",
+        className: "pending"
+      };
     }
 
+    if (prediction.prediction === prediction.result) {
+      return {
+        text: "✅ Correct",
+        className: "correct"
+      };
+    }
+
+    return {
+      text: "❌ Wrong",
+      className: "wrong"
+    };
   };
 
   return (
-    <div>
-
+    <div className="app-shell">
       <Navbar />
 
-      <h1>My Predictions</h1>
+      <main className="page-container">
+        <section className="page-hero">
+          <h1>📌 My Predictions</h1>
+          <p>
+            Review your submitted predictions, final scores, and match outcomes.
+          </p>
+        </section>
 
-      {
-        predictions.map(prediction => (
+        <div className="prediction-grid">
+          {predictions.map((prediction) => {
+            const outcome = getOutcome(prediction);
 
-          <div
-            key={prediction.id}
-            style={{
-              border: "1px solid gray",
-              padding: "15px",
-              marginBottom: "15px"
-            }}
-          >
+            return (
+              <div
+                key={prediction.id}
+                className="prediction-card"
+              >
+                <h3>
+                  {prediction.home_team} vs {prediction.away_team}
+                </h3>
 
-            <h3>
-              {prediction.home_team}
-              {" vs "}
-              {prediction.away_team}
-            </h3>
-
-            <p>
-              My Prediction:
-              {" "}
-              {prediction.prediction}
-            </p>
-
-            <p>
-              Predicted Score:
-              {" "}
-              {prediction.home_score}
-              {" - "}
-              {prediction.away_score}
-            </p>
-
-            <p>
-              Kickoff:
-              {" "}
-              {new Date(
-                prediction.kickoff_time
-              ).toLocaleString()}
-            </p>
-
-            <p>
-              Final Score:
-              {" "}
-              {
-                prediction.final_home_score !== null
-                  ? `${prediction.final_home_score} - ${prediction.final_away_score}`
-                  : "Pending"
-              }
-            </p>
-
-            <p>
-              Result:
-              {" "}
-              {prediction.result || "Pending"}
-            </p>
-
-            <p>
-              Status:
-              {" "}
-              {prediction.status}
-            </p>
-
-            <p>
-              Outcome:
-              {" "}
-              {
-                prediction.result
-                  ? prediction.prediction === prediction.result
-                    ? "✅ Correct"
-                    : "❌ Wrong"
-                  : "⏳ Pending"
-              }
-            </p>
-
-            {
-              prediction.result &&
-              prediction.home_score === prediction.final_home_score &&
-              prediction.away_score === prediction.final_away_score &&
-              (
-                <p>
-                  🎯 Perfect Score Prediction
+                <p className="prediction-detail">
+                  🧠 Prediction: <strong>{prediction.prediction}</strong>
                 </p>
-              )
-            }
 
-            {
-              prediction.result &&
-              prediction.prediction === prediction.result &&
-              !(
-                prediction.home_score === prediction.final_home_score &&
-                prediction.away_score === prediction.final_away_score
-              ) &&
-              (
-                <p>
-                  🔥 Close Score Prediction
+                <p className="prediction-detail">
+                  🎯 Predicted Score:{" "}
+                  <strong>
+                    {prediction.home_score} - {prediction.away_score}
+                  </strong>
                 </p>
-              )
-            }
 
-          </div>
+                <p className="prediction-detail">
+                  📅 Kickoff:{" "}
+                  {new Date(prediction.kickoff_time).toLocaleString()}
+                </p>
 
-        ))
-      }
+                <p className="prediction-detail">
+                  🏁 Final Score:{" "}
+                  {prediction.final_home_score !== null
+                    ? `${prediction.final_home_score} - ${prediction.final_away_score}`
+                    : "Pending"}
+                </p>
 
+                <p className="prediction-detail">
+                  🏆 Result: {prediction.result || "Pending"}
+                </p>
+
+                <p className="prediction-detail">
+                  📍 Status: {prediction.status}
+                </p>
+
+                <div className={`prediction-status ${outcome.className}`}>
+                  {outcome.text}
+                </div>
+
+{
+  prediction.result &&
+  prediction.prediction === prediction.result &&
+  prediction.home_score === prediction.final_home_score &&
+  prediction.away_score === prediction.final_away_score && (
+    <div className="prediction-status correct">
+      🎯 Perfect Score Prediction
+    </div>
+  )
+}
+              </div>
+            );
+          })}
+        </div>
+      </main>
     </div>
   );
-
 }
 
 export default MyPredictions;
