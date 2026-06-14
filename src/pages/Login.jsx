@@ -55,29 +55,9 @@ function Login() {
 
  return (
 
-  <div
-    style={{
-      minHeight: "100vh",
-  
-      background: "#020617",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      padding: "20px"
-    }}
-  >
+<div className="auth-page">
 
-    <div
-      style={{
-        width: "100%",
-        width: "100%",
-        maxWidth: "1400px",
-        display: "grid",
-        gridTemplateColumns: "1.3fr 1fr",
-        gap: "80px",
-        alignItems: "center"
-      }}
-    >
+<div className="auth-layout">
 
       {/* LEFT SIDE */}
 
@@ -85,13 +65,10 @@ function Login() {
 
 
         <img
-          src="/redstone-logo.svg"
-          alt="logo"
-          style={{
-            width: "350px",
-            marginBottom: "20px"
-          }}
-        />
+  src="/redstone-logo.svg"
+  alt="RedStone"
+  className="auth-logo"
+/>
 
         <h1
           style={{
@@ -133,16 +110,7 @@ Earn points and dominate the leaderboard.
 
       {/* RIGHT SIDE */}
 
-      <div
-        style={{
-          background: "#111827",
-          border: "1px solid #374151",
-          borderRadius: "20px",
-          padding: "50px",
-          boxShadow:
-  "0 0 40px rgba(239,68,68,0.15)"
-        }}
-      >
+      <div className="auth-card">
 
 <h2
   style={{
