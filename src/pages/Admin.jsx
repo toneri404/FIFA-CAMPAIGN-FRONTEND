@@ -554,6 +554,7 @@ const inputStyle = {
   fontSize: "15px"
 };
 
+
   return (
     <div>
 
@@ -727,70 +728,155 @@ const inputStyle = {
 
         <div
           key={user.id}
-          style={{
-            background:"#0f172a",
-            padding:"20px",
-            borderRadius:"12px",
-            marginBottom:"15px",
-            textAlign:"center"
-          }}
+style={{
+  background:"#0f172a",
+  border:"1px solid #374151",
+  borderRadius:"16px",
+  padding:"25px",
+  maxWidth:"500px",
+  margin:"0 auto 20px auto",
+  textAlign:"center",
+  boxShadow:"0 0 25px rgba(0,0,0,0.3)"
+}}
         >
 
-          <h3>{user.name}</h3>
+          <h3
+  style={{
+    fontSize:"28px",
+    marginBottom:"10px",
+    color:"white"
+  }}
+>
+  {user.name}
+</h3>
 
-          <p>{user.email}</p>
+<p
+  style={{
+    color:"#9CA3AF",
+    margin:"6px 0"
+  }}
+>
+  {user.email}
+</p>
 
-          <p>{user.twitter_url}</p>
+<p
+  style={{
+    color:"#60A5FA",
+    margin:"6px 0"
+  }}
+>
+  {user.twitter_url}
+</p>
 
           <p>
             🏆 Points: {user.points}
           </p>
 
-          <div
-            style={{
-              display:"flex",
-              justifyContent:"center",
-              gap:"10px",
-              marginTop:"15px",
-              flexWrap:"wrap"
-            }}
-          >
+<div
+  style={{
+    display:"flex",
+    justifyContent:"center",
+    gap:"12px",
+    marginTop:"20px",
+    flexWrap:"wrap"
+  }}
+>
 
-            <button
-onClick={() => {
+<button
+  onClick={() => {
+    setShowProfile(true);
+    setUserFilter(null);
+    fetchUserProfile(user.id);
+  }}
+  style={{
+    background:"#3b82f6",
+    color:"white",
+    border:"none",
+    borderRadius:"10px",
+    padding:"10px 16px",
+    cursor:"pointer",
+    fontWeight:"600"
+  }}
+>
+  View Profile
+</button>
+            {
+  user.status === "pending" && (
+    <>
+      <button
+        onClick={() =>
+          approveUser(user.id)
+        }
+        style={{
+          background:"#22c55e",
+          color:"white",
+          border:"none",
+          padding:"10px 15px",
+          borderRadius:"10px",
+          cursor:"pointer"
+        }}
+      >
+        Approve
+      </button>
 
-  setShowProfile(true);
-
-  setUserFilter(null);
-
-  fetchUserProfile(user.id);
-
-}}
-            >
-              View Profile
-            </button>
+      <button
+        onClick={() =>
+          rejectUser(user.id)
+        }
+        style={{
+          background:"#ef4444",
+          color:"white",
+          border:"none",
+          padding:"10px 15px",
+          borderRadius:"10px",
+          cursor:"pointer"
+        }}
+      >
+        Reject
+      </button>
+    </>
+  )
+}
 
             {
               user.status === "approved" && (
-                <button
-                  onClick={() =>
-                    rejectUser(user.id)
-                  }
-                >
-                  Reject
-                </button>
+<button
+  onClick={() =>
+    rejectUser(user.id)
+  }
+  style={{
+    background:"#ef4444",
+    color:"white",
+    border:"none",
+    borderRadius:"10px",
+    padding:"10px 16px",
+    cursor:"pointer",
+    fontWeight:"600"
+  }}
+>
+  Reject
+</button>
               )
             }
 
             {
               user.status === "rejected" && (
-                <button
-                  onClick={() =>
-                    approveUser(user.id)
-                  }
-                >
-                  Re-Approve
-                </button>
+<button
+  onClick={() =>
+    approveUser(user.id)
+  }
+  style={{
+    background:"#22c55e",
+    color:"white",
+    border:"none",
+    borderRadius:"10px",
+    padding:"10px 16px",
+    cursor:"pointer",
+    fontWeight:"600"
+  }}
+>
+  Re-Approve
+</button>
               )
             }
 
