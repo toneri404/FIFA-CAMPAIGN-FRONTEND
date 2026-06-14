@@ -1,22 +1,54 @@
 import { NavLink } from "react-router-dom";
+import { useState } from "react";
 
 function Navbar() {
-
   const user = JSON.parse(
     localStorage.getItem("user") || "null"
   );
 
-  const logout = () => {
+  const [menuOpen, setMenuOpen] =
+    useState(false);
 
+  const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-
     window.location.href = "/";
-
   };
 
-  return (
+  const linkStyle = ({ isActive }) => ({
+    color: isActive ? "#ef4444" : "#d1d5db",
+    textDecoration: "none",
+    fontWeight: isActive ? "700" : "500",
+    fontSize: "16px"
+  });
 
+  const links = (
+    <>
+      <NavLink to="/dashboard" style={linkStyle}>
+        Dashboard
+      </NavLink>
+
+      <NavLink to="/leaderboard" style={linkStyle}>
+        Leaderboard
+      </NavLink>
+
+      <NavLink to="/profile" style={linkStyle}>
+        Profile
+      </NavLink>
+
+      <NavLink to="/my-predictions" style={linkStyle}>
+        Predictions
+      </NavLink>
+
+      {user?.role === "admin" && (
+        <NavLink to="/admin" style={linkStyle}>
+          Admin
+        </NavLink>
+      )}
+    </>
+  );
+
+  return (
     <nav
       style={{
         width: "100%",
@@ -27,123 +59,19 @@ function Navbar() {
         zIndex: 1000
       }}
     >
+      <div className="navbar-inner">
+        <img
+          src="/redstone-logo.svg"
+          alt="RedStone"
+          className="navbar-logo"
+        />
 
-      <div
-        style={{
-          maxWidth: "1300px",
-          margin: "0 auto",
-          padding: "16px 24px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: "15px"
-        }}
-      >
-
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "10px"
-          }}
-        >
-<img
-  src="/redstone-logo.svg"
-  alt="RedStone"
-  style={{
-    height: "35px",
-    width: "auto",
-    display: "block"
-  }}
-/>
-
-
+        <div className="desktop-menu">
+          {links}
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            gap: "25px",
-            alignItems: "center",
-            flexWrap: "wrap"
-          }}
-        >
-
-          <NavLink
-            to="/dashboard"
-            style={({ isActive }) => ({
-              color: isActive ? "#ef4444" : "#d1d5db",
-              textDecoration: "none",
-              fontWeight: isActive ? "700" : "500"
-            })}
-          >
-            Dashboard
-          </NavLink>
-
-          <NavLink
-            to="/leaderboard"
-            style={({ isActive }) => ({
-              color: isActive ? "#ef4444" : "#d1d5db",
-              textDecoration: "none",
-              fontWeight: isActive ? "700" : "500"
-            })}
-          >
-            Leaderboard
-          </NavLink>
-
-          <NavLink
-            to="/profile"
-            style={({ isActive }) => ({
-              color: isActive ? "#ef4444" : "#d1d5db",
-              textDecoration: "none",
-              fontWeight: isActive ? "700" : "500"
-            })}
-          >
-            Profile
-          </NavLink>
-
-          <NavLink
-            to="/my-predictions"
-            style={({ isActive }) => ({
-              color: isActive ? "#ef4444" : "#d1d5db",
-              textDecoration: "none",
-              fontWeight: isActive ? "700" : "500"
-            })}
-          >
-            Predictions
-          </NavLink>
-
-          {
-            user?.role === "admin" && (
-              <NavLink
-                to="/admin"
-                style={({ isActive }) => ({
-                  color: isActive ? "#ef4444" : "#d1d5db",
-                  textDecoration: "none",
-                  fontWeight: isActive ? "700" : "500"
-                })}
-              >
-                Admin
-              </NavLink>
-            )
-          }
-
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "15px"
-          }}
-        >
-
-          <div
-            style={{
-              textAlign: "right"
-            }}
-          >
+        <div className="desktop-user">
+          <div style={{ textAlign: "right" }}>
             <div
               style={{
                 color: "white",
@@ -165,27 +93,48 @@ function Navbar() {
 
           <button
             onClick={logout}
-            style={{
-              background: "#ef4444",
-              color: "white",
-              border: "none",
-              padding: "10px 16px",
-              borderRadius: "10px",
-              cursor: "pointer",
-              fontWeight: "bold"
-            }}
+            className="logout-btn"
           >
             Logout
           </button>
-
         </div>
 
+        <button
+          className="mobile-menu-btn"
+          onClick={() =>
+            setMenuOpen(!menuOpen)
+          }
+        >
+          {menuOpen ? "✕" : "☰"}
+        </button>
       </div>
 
+      {menuOpen && (
+        <div className="mobile-menu">
+          <div className="mobile-links">
+            {links}
+          </div>
+
+          <div className="mobile-user-box">
+            <div>
+              👤 <strong>{user?.name}</strong>
+            </div>
+
+            <div>
+              🏆 {user?.points ?? 0} pts
+            </div>
+
+            <button
+              onClick={logout}
+              className="logout-btn mobile-logout"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      )}
     </nav>
-
   );
-
 }
 
 export default Navbar;
