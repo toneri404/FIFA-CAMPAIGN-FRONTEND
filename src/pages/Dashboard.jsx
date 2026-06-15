@@ -21,6 +21,11 @@ function Dashboard() {
   };
 
   useEffect(() => {
+
+      console.log(
+    "Browser timezone:",
+    Intl.DateTimeFormat().resolvedOptions().timeZone
+  );
     fetchMatches();
     fetchMyPredictions();
   }, []);
@@ -125,8 +130,8 @@ function Dashboard() {
   };
 
   const sortedMatches = [...matches].sort((a, b) => {
-  const aTime = new Date(a.kickoff_time + "+06:00");
-  const bTime = new Date(b.kickoff_time + "+06:00");
+const aTime = parseBdDate(a.kickoff_time);
+const bTime = parseBdDate(b.kickoff_time);
 
   const aOpen = new Date() < aTime;
   const bOpen = new Date() < bTime;
@@ -147,13 +152,27 @@ function Dashboard() {
   return aPriority - bPriority || aTime - bTime;
 });
 
-  const formatMatchTime = (kickoffTime) => {
-  const date = new Date(kickoffTime + "+06:00");
+const parseBdDate = (kickoffTime) => {
+  const isoTime =
+    kickoffTime
+      .replace(" ", "T")
+      .replace(/\.\d+$/, "");
+
+  return new Date(`${isoTime}+06:00`);
+};
+
+const formatMatchTime = (kickoffTime) => {
+  const date = parseBdDate(kickoffTime);
 
   return {
-    local: date.toLocaleString(),
-    bd: date.toLocaleString("en-US", {
-      timeZone: "Asia/Dhaka"
+    local: date.toLocaleString(undefined, {
+      dateStyle: "medium",
+      timeStyle: "short"
+    }),
+    bd: date.toLocaleString(undefined, {
+      timeZone: "Asia/Dhaka",
+      dateStyle: "medium",
+      timeStyle: "short"
     })
   };
 };
@@ -176,7 +195,7 @@ function Dashboard() {
         <div className="match-grid">
           {sortedMatches.map(match => {
             const isOpen =
-             new Date() < new Date(match.kickoff_time + "+06:00");
+             new Date() < parseBdDate(match.kickoff_time);
             const time = formatMatchTime(match.kickoff_time);
             const submitted =
               alreadyPredicted(match.id);

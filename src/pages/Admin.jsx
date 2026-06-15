@@ -106,24 +106,32 @@ function Admin() {
   };
 
   const bdTimeToLocalInput = (value) => {
-    const date = new Date(value + "+06:00");
+    const date = parseBdDate(value);
 
     const pad = (n) =>
       String(n).padStart(2, "0");
 
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
   };
+  const parseBdDate = (kickoffTime) => {
+  const isoTime =
+    kickoffTime
+      .replace(" ", "T")
+      .replace(/\.\d+$/, "");
 
-  const formatMatchTime = (kickoffTime) => {
-    const date = new Date(kickoffTime + "+06:00");
+  return new Date(`${isoTime}+06:00`);
+};
 
-    return {
-      local: date.toLocaleString(),
-      bd: date.toLocaleString("en-US", {
-        timeZone: "Asia/Dhaka"
-      })
-    };
+const formatMatchTime = (kickoffTime) => {
+  const date = parseBdDate(kickoffTime);
+
+  return {
+    local: date.toLocaleString(),
+    bd: date.toLocaleString("en-US", {
+      timeZone: "Asia/Dhaka"
+    })
   };
+};
 
   const TeamFlag = ({ team }) => {
     const code = teamFlags[team?.trim()];
