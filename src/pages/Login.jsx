@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
+
 
 const inputStyle = {
   width: "100%",
@@ -18,6 +19,13 @@ function Login() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  useEffect(() => {
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    navigate("/dashboard", { replace: true });
+  }
+}, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
