@@ -128,6 +128,14 @@ function Dashboard() {
       );
     }
   };
+  const parseBdDate = (kickoffTime) => {
+  const isoTime =
+    kickoffTime
+      .replace(" ", "T")
+      .replace(/\.\d+$/, "");
+
+  return new Date(`${isoTime}+06:00`);
+};
 
   const sortedMatches = [...matches].sort((a, b) => {
 const aTime = parseBdDate(a.kickoff_time);
@@ -152,14 +160,7 @@ const bTime = parseBdDate(b.kickoff_time);
   return aPriority - bPriority || aTime - bTime;
 });
 
-const parseBdDate = (kickoffTime) => {
-  const isoTime =
-    kickoffTime
-      .replace(" ", "T")
-      .replace(/\.\d+$/, "");
 
-  return new Date(`${isoTime}+06:00`);
-};
 
 const formatMatchTime = (kickoffTime) => {
   const date = parseBdDate(kickoffTime);
