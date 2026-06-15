@@ -52,6 +52,7 @@ const teamFlags = {
   "Cabo Verde": "CV",
   "DR Congo": "CD",
   "Congo-Kinshasa": "CD",
+  "Congo - Kinshasa": "CD"
   
 };
 
