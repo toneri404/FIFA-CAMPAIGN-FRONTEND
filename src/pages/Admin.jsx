@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import api from "../services/api";
+import Toast from "../components/Toast";
 
 function Admin() {
 
@@ -33,6 +34,18 @@ const [closePoints, setClosePoints] =
   const [openedMatch, setOpenedMatch] =
   useState(null);
 //
+const [toast, setToast] = useState(null);
+
+const showToast = (message, type = "success") => {
+  setToast({
+    message,
+    type
+  });
+
+  setTimeout(() => {
+    setToast(null);
+  }, 3000);
+};
 
 const [editingMatch, setEditingMatch] =
   useState(null);
@@ -234,63 +247,75 @@ const [profilePredictions,
 
   };
 
-  const createMatch = async () => {
+const createMatch = async () => {
+  if (!homeTeam.trim()) {
+    showToast("Home team is required", "error");
+    return;
+  }
 
-    try {
+  if (!awayTeam.trim()) {
+    showToast("Away team is required", "error");
+    return;
+  }
 
-      const token =
-        localStorage.getItem("token");
-        console.log(kickoffTime);
+  if (!kickoffTime) {
+    showToast("Kickoff date and time is required", "error");
+    return;
+  }
 
-await api.post(
-  "/admin/matches",
-  {
-    home_team: homeTeam,
-    away_team: awayTeam,
-    kickoff_time: kickoffTime,
+  try {
+    const token =
+      localStorage.getItem("token");
 
-    winner_points:
-      winnerPoints === ""
-        ? null
-        : Number(winnerPoints),
+    await api.post(
+      "/admin/matches",
+      {
+        home_team: homeTeam.trim(),
+        away_team: awayTeam.trim(),
+        kickoff_time: kickoffTime,
 
-    perfect_points:
-      perfectPoints === ""
-        ? null
-        : Number(perfectPoints),
+        winner_points:
+          winnerPoints === ""
+            ? null
+            : Number(winnerPoints),
 
-    close_points:
-      closePoints === ""
-        ? null
-        : Number(closePoints)
-  },
-        {
-          headers: {
-            Authorization: token
-          }
+        perfect_points:
+          perfectPoints === ""
+            ? null
+            : Number(perfectPoints),
+
+        close_points:
+          closePoints === ""
+            ? null
+            : Number(closePoints)
+      },
+      {
+        headers: {
+          Authorization: token
         }
-      );
+      }
+    );
 
-      alert("Match created");
+    showToast("Match created successfully", "success");
 
-      setHomeTeam("");
-      setAwayTeam("");
-      setKickoffTime("");
-      setWinnerPoints("");
-setPerfectPoints("");
-setClosePoints("");
+    setHomeTeam("");
+    setAwayTeam("");
+    setKickoffTime("");
+    setWinnerPoints("");
+    setPerfectPoints("");
+    setClosePoints("");
 
-      fetchMatches();
+    fetchMatches();
+    fetchStats();
 
-    } catch (error) {
-
-      console.error(error);
-
-      alert("Failed to create match");
-
-    }
-
-  };
+  } catch (error) {
+    showToast(
+      error.response?.data?.message ||
+      "Failed to create match",
+      "error"
+    );
+  }
+};
 
 const setResult = async (id) => {
 
@@ -313,9 +338,10 @@ const setResult = async (id) => {
       home_score === undefined ||
       away_score === undefined
     ) {
-      return alert(
-        "Enter final score"
-      );
+      return showToast(
+  "Enter final score",
+  "error"
+);
     }
 
     await api.post(
@@ -342,18 +368,16 @@ const setResult = async (id) => {
 };
 
 const deleteMatch = async (id) => {
-
-  const confirmDelete =
-    window.confirm(
-      "Delete this match and all predictions?"
-    );
+  const confirmDelete = window.confirm(
+    "Delete this match and all predictions?"
+  );
 
   if (!confirmDelete) {
+    showToast("Delete cancelled", "error");
     return;
   }
 
   try {
-
     const token =
       localStorage.getItem("token");
 
@@ -366,20 +390,21 @@ const deleteMatch = async (id) => {
       }
     );
 
-    alert(
-      "Match deleted"
+    showToast(
+      "Match deleted successfully",
+      "success"
     );
 
     fetchMatches();
+    fetchStats();
 
   } catch (error) {
-
-    alert(
-      error.response?.data?.message
+    showToast(
+      error.response?.data?.message ||
+      "Failed to delete match",
+      "error"
     );
-
   }
-
 };
 
 const saveResult = async (
@@ -425,9 +450,7 @@ const saveResult = async (
       }
     );
 
-    alert(
-      "Result saved"
-    );
+    showToast("Result saved successfully", "success");
 
     fetchMatches();
 
@@ -493,9 +516,10 @@ const updateMatch = async (
       }
     );
 
-    alert(
-      "Match updated"
-    );
+    showToast(
+  "Match updated successfully",
+  "success"
+);
 
     setEditingMatch(null);
 
@@ -559,6 +583,7 @@ const inputStyle = {
     <div>
 
       <Navbar />
+      <Toast toast={toast} />
     <div
       className="page-container"
     >
