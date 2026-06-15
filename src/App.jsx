@@ -19,6 +19,21 @@ import ProtectedRoute from "./components/ProtectedRoute";
 function App() {
   return (
     <BrowserRouter>
+    <div
+  style={{
+    position: "fixed",
+    bottom: "15px",
+    right: "14px",
+    fontSize: "12px",
+    color: "rgba(156,163,175,0.25)",
+    letterSpacing: "0.5px",
+    zIndex: 999,
+    pointerEvents: "none",
+    userSelect: "none"
+  }}
+>
+  Built by RedStone Community
+</div>
       <Routes>
 
         <Route path="/" element={<Login />} />
@@ -85,6 +100,7 @@ function App() {
 
       </Routes>
     </BrowserRouter>
+    
   );
 }
 
