@@ -85,53 +85,31 @@ function Admin() {
     color: "white"
   };
 
-  const localInputToBdTime = (value) => {
-    const date = new Date(value);
+  const bdInputToUtcTime = (value) => {
+  const date = new Date(value);
+  date.setHours(date.getHours() - 6);
 
-    const parts = new Intl.DateTimeFormat("en-CA", {
-      timeZone: "Asia/Dhaka",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false
-    }).formatToParts(date);
+  const pad = (n) => String(n).padStart(2, "0");
 
-    const get = (type) =>
-      parts.find(part => part.type === type)?.value;
-
-    return `${get("year")}-${get("month")}-${get("day")} ${get("hour")}:${get("minute")}:${get("second")}`;
-  };
-
-  const bdTimeToLocalInput = (value) => {
-    const date = parseBdDate(value);
-
-    const pad = (n) =>
-      String(n).padStart(2, "0");
-
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-  };
-  const parseBdDate = (kickoffTime) => {
-  const isoTime =
-    kickoffTime
-      .replace(" ", "T")
-      .replace(/\.\d+$/, "");
-
-  return new Date(`${isoTime}+06:00`);
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:00`;
 };
 
-const formatMatchTime = (kickoffTime) => {
-  const date = parseBdDate(kickoffTime);
+const utcDbToBdInput = (value) => {
+  const date = new Date(value.replace(" ", "T"));
+  date.setHours(date.getHours() + 6);
 
-  return {
-    local: date.toLocaleString(),
-    bd: date.toLocaleString("en-US", {
-      timeZone: "Asia/Dhaka"
-    })
-  };
+  const pad = (n) => String(n).padStart(2, "0");
+
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 };
+
+const formatUtcTime = (value) => {
+  return value.replace(" ", " UTC ");
+};
+
+ 
+
+
 
   const TeamFlag = ({ team }) => {
     const code = teamFlags[team?.trim()];
@@ -302,7 +280,7 @@ const formatMatchTime = (kickoffTime) => {
         {
           home_team: homeTeam.trim(),
           away_team: awayTeam.trim(),
-          kickoff_time: localInputToBdTime(kickoffTime),
+          kickoff_time: bdInputToUtcTime(kickoffTime),
           winner_points: winnerPoints === "" ? null : Number(winnerPoints),
           perfect_points: perfectPoints === "" ? null : Number(perfectPoints),
           close_points: closePoints === "" ? null : Number(closePoints)
@@ -452,7 +430,7 @@ const formatMatchTime = (kickoffTime) => {
           ...editData,
           home_team: editData.home_team.trim(),
           away_team: editData.away_team.trim(),
-          kickoff_time: localInputToBdTime(editData.kickoff_time)
+          kickoff_time: bdInputToUtcTime(editData.kickoff_time)
         },
         {
           headers: {
@@ -948,6 +926,9 @@ const formatMatchTime = (kickoffTime) => {
               onChange={(e) => setKickoffTime(e.target.value)}
               style={inputStyle}
             />
+            <p style={{ color: "#9CA3AF", margin: 0 }}>
+  Enter kickoff time in Bangladesh time.
+</p>
 
             <input
               type="number"
@@ -1000,7 +981,7 @@ const formatMatchTime = (kickoffTime) => {
         <h2>All Matches</h2>
 
         {matches.map(match => {
-          const time = formatMatchTime(match.kickoff_time);
+          const time = formatUtcTime(match.kickoff_time);
 
           return (
             <div
@@ -1016,9 +997,7 @@ const formatMatchTime = (kickoffTime) => {
               </h2>
 
               <p>
-                🇧🇩 BD time: {time.bd}
-                <br />
-                🌍 Your local time: {time.local}
+                🌍 UTC time: {time}
               </p>
 
               <div style={{ marginBottom: "15px", marginTop: "10px" }}>
@@ -1167,7 +1146,7 @@ const formatMatchTime = (kickoffTime) => {
                     setEditData({
                       home_team: match.home_team,
                       away_team: match.away_team,
-                      kickoff_time: bdTimeToLocalInput(match.kickoff_time),
+                     kickoff_time: utcDbToBdInput(match.kickoff_time),
                       status: match.status
                     });
                   }}

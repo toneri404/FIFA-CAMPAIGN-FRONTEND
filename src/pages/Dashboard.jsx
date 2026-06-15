@@ -22,10 +22,6 @@ function Dashboard() {
 
   useEffect(() => {
 
-      console.log(
-    "Browser timezone:",
-    Intl.DateTimeFormat().resolvedOptions().timeZone
-  );
     fetchMatches();
     fetchMyPredictions();
   }, []);
@@ -128,18 +124,17 @@ function Dashboard() {
       );
     }
   };
-  const parseBdDate = (kickoffTime) => {
-  const isoTime =
-    kickoffTime
-      .replace(" ", "T")
-      .replace(/\.\d+$/, "");
+  const parseUtcDate = (kickoffTime) => {
+  const isoTime = kickoffTime
+    .replace(" ", "T")
+    .replace(/\.\d+$/, "");
 
-  return new Date(`${isoTime}+06:00`);
+  return new Date(`${isoTime}Z`);
 };
 
   const sortedMatches = [...matches].sort((a, b) => {
-const aTime = parseBdDate(a.kickoff_time);
-const bTime = parseBdDate(b.kickoff_time);
+const aTime = parseUtcDate(a.kickoff_time);
+const bTime = parseUtcDate(b.kickoff_time);
 
   const aOpen = new Date() < aTime;
   const bOpen = new Date() < bTime;
@@ -163,19 +158,7 @@ const bTime = parseBdDate(b.kickoff_time);
 
 
 const formatMatchTime = (kickoffTime) => {
-  const date = parseBdDate(kickoffTime);
-
-  return {
-    local: date.toLocaleString(undefined, {
-      dateStyle: "medium",
-      timeStyle: "short"
-    }),
-    bd: date.toLocaleString(undefined, {
-      timeZone: "Asia/Dhaka",
-      dateStyle: "medium",
-      timeStyle: "short"
-    })
-  };
+  return kickoffTime.replace(" ", " UTC ");
 };
 
   return (
@@ -196,7 +179,7 @@ const formatMatchTime = (kickoffTime) => {
         <div className="match-grid">
           {sortedMatches.map(match => {
             const isOpen =
-             new Date() < parseBdDate(match.kickoff_time);
+             new Date() < parseUtcDate(match.kickoff_time);
             const time = formatMatchTime(match.kickoff_time);
             const submitted =
               alreadyPredicted(match.id);
@@ -254,9 +237,7 @@ const formatMatchTime = (kickoffTime) => {
                   </div>
 
                   <div className="match-meta">
-                   📅 Your local time: {time.local}
-<br />
-🇧🇩 BD time: {time.bd}
+                   📅 UTC time: {time}
                   </div>
 
                   <div
