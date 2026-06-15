@@ -125,27 +125,38 @@ function Dashboard() {
   };
 
   const sortedMatches = [...matches].sort((a, b) => {
-    const aOpen = new Date() < new Date(a.kickoff_time);
-    const bOpen = new Date() < new Date(b.kickoff_time);
+  const aTime = new Date(a.kickoff_time + "+06:00");
+  const bTime = new Date(b.kickoff_time + "+06:00");
 
-    const aSubmitted = alreadyPredicted(a.id);
-    const bSubmitted = alreadyPredicted(b.id);
+  const aOpen = new Date() < aTime;
+  const bOpen = new Date() < bTime;
 
-    const aPriority =
-      aOpen && !aSubmitted ? 1 :
-      aSubmitted ? 2 :
-      3;
+  const aSubmitted = alreadyPredicted(a.id);
+  const bSubmitted = alreadyPredicted(b.id);
 
-    const bPriority =
-      bOpen && !bSubmitted ? 1 :
-      bSubmitted ? 2 :
-      3;
+  const aPriority =
+    aOpen && !aSubmitted ? 1 :
+    aSubmitted ? 2 :
+    3;
 
-    return (
-  aPriority - bPriority ||
-  new Date(a.kickoff_time) - new Date(b.kickoff_time)
-);
-  });
+  const bPriority =
+    bOpen && !bSubmitted ? 1 :
+    bSubmitted ? 2 :
+    3;
+
+  return aPriority - bPriority || aTime - bTime;
+});
+
+  const formatMatchTime = (kickoffTime) => {
+  const date = new Date(kickoffTime + "+06:00");
+
+  return {
+    local: date.toLocaleString(),
+    bd: date.toLocaleString("en-US", {
+      timeZone: "Asia/Dhaka"
+    })
+  };
+};
 
   return (
     <div className="app-shell">
@@ -165,8 +176,8 @@ function Dashboard() {
         <div className="match-grid">
           {sortedMatches.map(match => {
             const isOpen =
-              new Date() < new Date(match.kickoff_time);
-
+             new Date() < new Date(match.kickoff_time + "+06:00");
+            const time = formatMatchTime(match.kickoff_time);
             const submitted =
               alreadyPredicted(match.id);
 
@@ -223,7 +234,9 @@ function Dashboard() {
                   </div>
 
                   <div className="match-meta">
-                    📅 {new Date(match.kickoff_time).toLocaleString()}
+                   📅 Your local time: {time.local}
+<br />
+🇧🇩 BD time: {time.bd}
                   </div>
 
                   <div

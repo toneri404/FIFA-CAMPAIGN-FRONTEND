@@ -1,4 +1,4 @@
-const teamFlags = {
+const teamFlag = {
   Argentina: "AR",
   Algeria: "DZ",
   Australia: "AU",
@@ -53,7 +53,22 @@ const teamFlags = {
   "DR Congo": "CD",
   "Congo-Kinshasa": "CD",
   "Congo - Kinshasa": "CD"
-  
 };
 
-export default teamFlags;
+export const getTeamFlagCode = (teamName) => {
+  if (!teamName) return null;
+
+  const normalized = teamName.trim();
+
+  return (
+    teamFlag[normalized] ||
+    teamFlag[
+      normalized
+        .toLowerCase()
+        .replace(/\b\w/g, c => c.toUpperCase())
+    ] ||
+    null
+  );
+};
+
+export default teamFlag;
