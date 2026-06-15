@@ -429,13 +429,14 @@ const saveResult = async (
       ];
 
     if (
-      homeScore === undefined ||
-      awayScore === undefined
-    ) {
-      return alert(
-        "Enter final score"
-      );
-    }
+  homeScore === undefined ||
+  awayScore === undefined
+) {
+  return showToast(
+    "Enter final score",
+    "error"
+  );
+}
 
     await api.post(
       `/admin/match-result/${matchId}`,
@@ -453,6 +454,8 @@ const saveResult = async (
     showToast("Result saved successfully", "success");
 
     fetchMatches();
+    fetchStats();
+    fetchAllUsers();
 
   } catch (error) {
 

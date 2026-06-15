@@ -109,8 +109,8 @@ function MyPredictions() {
 {
   prediction.result &&
   prediction.prediction === prediction.result &&
-  prediction.home_score === prediction.final_home_score &&
-  prediction.away_score === prediction.final_away_score && (
+  Number(prediction.home_score) === Number(prediction.final_home_score) &&
+  Number(prediction.away_score) === Number(prediction.final_away_score) && (
     <div className="prediction-status correct">
       🎯 Perfect Score Prediction
     </div>

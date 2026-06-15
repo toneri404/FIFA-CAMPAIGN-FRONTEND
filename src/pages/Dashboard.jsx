@@ -141,7 +141,10 @@ function Dashboard() {
       bSubmitted ? 2 :
       3;
 
-    return aPriority - bPriority;
+    return (
+  aPriority - bPriority ||
+  new Date(a.kickoff_time) - new Date(b.kickoff_time)
+);
   });
 
   return (
