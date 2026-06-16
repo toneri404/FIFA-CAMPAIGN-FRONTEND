@@ -158,7 +158,13 @@ const bTime = parseUtcDate(b.kickoff_time);
 
 
 const formatMatchTime = (kickoffTime) => {
-  return kickoffTime.replace(" ", " UTC ");
+  const date = parseUtcDate(kickoffTime);
+
+  return date.toLocaleString("en-US", {
+    timeZone: "UTC",
+    dateStyle: "medium",
+    timeStyle: "short"
+  }) + " UTC";
 };
 
   return (

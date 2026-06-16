@@ -85,27 +85,26 @@ function Admin() {
     color: "white"
   };
 
-  const bdInputToUtcTime = (value) => {
-  const date = new Date(value);
-  date.setHours(date.getHours() - 6);
-
-  const pad = (n) => String(n).padStart(2, "0");
-
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:00`;
+  
+const utcInputToDb = (value) => {
+  return value.replace("T", " ") + ":00";
 };
 
-const utcDbToBdInput = (value) => {
-  const date = new Date(value.replace(" ", "T"));
-  date.setHours(date.getHours() + 6);
-
-  const pad = (n) => String(n).padStart(2, "0");
-
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+const utcDbToInput = (value) => {
+  return value.replace(" ", "T").slice(0, 16);
 };
 
 const formatUtcTime = (value) => {
-  return value.replace(" ", " UTC ");
+  const date = new Date(value.replace(" ", "T") + "Z");
+
+  return date.toLocaleString("en-US", {
+    timeZone: "UTC",
+    dateStyle: "medium",
+    timeStyle: "short"
+  }) + " UTC";
 };
+
+
 
  
 
@@ -280,7 +279,7 @@ const formatUtcTime = (value) => {
         {
           home_team: homeTeam.trim(),
           away_team: awayTeam.trim(),
-          kickoff_time: bdInputToUtcTime(kickoffTime),
+          kickoff_time: utcInputToDb(kickoffTime),
           winner_points: winnerPoints === "" ? null : Number(winnerPoints),
           perfect_points: perfectPoints === "" ? null : Number(perfectPoints),
           close_points: closePoints === "" ? null : Number(closePoints)
@@ -430,7 +429,7 @@ const formatUtcTime = (value) => {
           ...editData,
           home_team: editData.home_team.trim(),
           away_team: editData.away_team.trim(),
-          kickoff_time: bdInputToUtcTime(editData.kickoff_time)
+          kickoff_time: utcInputToDb(editData.kickoff_time)
         },
         {
           headers: {
@@ -927,7 +926,7 @@ const formatUtcTime = (value) => {
               style={inputStyle}
             />
             <p style={{ color: "#9CA3AF", margin: 0 }}>
-  Enter kickoff time in Bangladesh time.
+  Enter kickoff time in UTC.
 </p>
 
             <input
@@ -1146,7 +1145,7 @@ const formatUtcTime = (value) => {
                     setEditData({
                       home_team: match.home_team,
                       away_team: match.away_team,
-                     kickoff_time: utcDbToBdInput(match.kickoff_time),
+                     kickoff_time: utcDbToInput(match.kickoff_time),
                       status: match.status
                     });
                   }}
