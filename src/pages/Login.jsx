@@ -87,7 +87,7 @@ function Login() {
             marginBottom: "15px"
           }}
         >
-          FIFA Prediction Campaign
+          Football Prediction Campaign
         </h1>
 
         <p
@@ -97,7 +97,7 @@ function Login() {
             lineHeight: "1.6"
           }}
         >
-Predict every FIFA World Cup match.
+Predict every World Cup 2026 match.
 Compete with miners.
 Earn points and dominate the leaderboard.
         </p>

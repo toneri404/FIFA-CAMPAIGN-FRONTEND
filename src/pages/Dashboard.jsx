@@ -169,7 +169,7 @@ const formatMatchTime = (kickoffTime) => {
       <main className="page-container">
         <section className="page-hero">
           <h1>⚽ RedStone Miners League</h1>
-          <h2>FIFA World Cup 2026 Prediction Campaign</h2>
+          <h2>World Cup 2026 Prediction Campaign</h2>
           <p>
             Predict match outcomes, climb the leaderboard, unlock achievements,
             and compete with fellow miners.
