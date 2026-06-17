@@ -302,22 +302,31 @@ const formatMatchTime = (kickoffTime) => {
                         {match.home_team}
                       </button>
 
-                      <button
-                        disabled={disabled}
-                        onClick={() =>
-                          setPredictions({
-                            ...predictions,
-                            [`${match.id}_winner`]: "Draw"
-                          })
-                        }
-                        className={
-                          predictions[`${match.id}_winner`] === "Draw"
-                            ? "choice-btn draw-active"
-                            : "choice-btn"
-                        }
-                      >
-                        Draw
-                      </button>
+
+
+<div style={{ position: "relative" }}>
+  <button
+    disabled={disabled}
+    onClick={() =>
+      setPredictions({
+        ...predictions,
+        [`${match.id}_winner`]: "Draw"
+      })
+    }
+    className={
+      predictions[`${match.id}_winner`] === "Draw"
+        ? "choice-btn draw-active"
+        : "choice-btn"
+    }
+  >
+    Draw
+  </button>
+
+  <span className="draw-x2-badge">
+    🔥 2X
+  </span>
+</div>
+
 
                       <button
                         disabled={disabled}
