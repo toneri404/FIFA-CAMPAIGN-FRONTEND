@@ -288,11 +288,20 @@ const viewMatchPredictions = async (matchId) => {
 
 {openedPredictionMatch === match.id && (
 
- <div className="match-prediction-panel">
+<div className="match-prediction-panel">
 
-      <h3 style={{ marginBottom: "14px", color: "white" }}>
-        👀 Match Predictions
-      </h3>
+<div className="prediction-panel-header">
+  <button
+    onClick={() => setOpenedPredictionMatch(null)}
+    className="prediction-close-btn"
+  >
+    ✕
+  </button>
+
+  <h3>
+    👀 Match Predictions
+  </h3>
+</div>
 
       {matchPredictionList[match.id]?.length === 0 ? (
         <p style={{ color: "#9CA3AF" }}>
