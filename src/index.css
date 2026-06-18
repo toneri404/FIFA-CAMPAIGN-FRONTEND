@@ -1205,40 +1205,9 @@ h2 {
     gap: 10px;
   }
 }
-.prediction-close-btn {
-  position: absolute;
-  top: 12px;
-  right: 12px;
 
-  width: 36px;
-  height: 36px;
-
-  border: none;
-  border-radius: 10px;
-
-  background: rgba(239,68,68,0.15);
-  color: white;
-
-  font-size: 18px;
-  font-weight: 900;
-
-  cursor: pointer;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.prediction-close-btn:hover {
-  background: rgba(239,68,68,0.3);
-}
 
 @media (max-width:768px){
-  .prediction-close-btn{
-    width:42px;
-    height:42px;
-    font-size:20px;
-  }
 
   .match-prediction-panel h3{
     padding-right:50px;
@@ -1373,3 +1342,31 @@ h2 {
   }
 }
 
+@media (max-width: 768px) {
+  .match-prediction-panel {
+    position: fixed !important;
+    top: 145px !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    max-height: 58vh !important;
+    overflow-y: auto !important;
+    padding: 0 16px 16px !important;
+    z-index: 99999 !important;
+  }
+
+  .prediction-panel-header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 100000 !important;
+    background: rgba(15,23,42,0.98) !important;
+    padding: 16px 48px 14px 0 !important;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .prediction-close-btn {
+    position: absolute !important;
+    top: 10px !important;
+    right: 0 !important;
+  }
+}
