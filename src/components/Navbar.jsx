@@ -195,12 +195,65 @@ const logout = () => {
           </button>
         </div>
 
-        <button
-          className="mobile-menu-btn"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          {menuOpen ? "✕" : "☰"}
-        </button>
+<div className="mobile-nav-actions">
+  <div style={{ position: "relative" }}>
+    <button
+      onClick={() => setShowNotification(!showNotification)}
+      className="mobile-notification-btn"
+    >
+      🔔
+
+      {notification && (
+        <span className="notification-dot" />
+      )}
+    </button>
+
+    {showNotification && (
+      <div className="mobile-notification-box">
+        {notification ? (
+          <>
+            <strong>{notification.message}</strong>
+
+            <p style={{ color: "#9CA3AF", margin: "6px 0 12px" }}>
+              Leaderboard updated recently
+            </p>
+
+            <button
+              onClick={() => {
+                localStorage.removeItem("mh_notification");
+                setNotification(null);
+                setShowNotification(false);
+              }}
+              style={{
+                width: "100%",
+                padding: "8px",
+                borderRadius: "10px",
+                border: "1px solid #374151",
+                background: "#0f172a",
+                color: "#d1d5db",
+                cursor: "pointer",
+                fontWeight: "700"
+              }}
+            >
+              ✓ Mark all as read
+            </button>
+          </>
+        ) : (
+          <p style={{ color: "#9CA3AF", margin: 0 }}>
+            No notifications yet
+          </p>
+        )}
+      </div>
+    )}
+  </div>
+
+  <button
+    className="mobile-menu-btn"
+    onClick={() => setMenuOpen(!menuOpen)}
+  >
+    {menuOpen ? "✕" : "☰"}
+  </button>
+</div>
       </div>
 
       {menuOpen && (
