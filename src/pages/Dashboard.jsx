@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import api from "../services/api";
 import Navbar from "../components/Navbar";
 import Toast from "../components/Toast";
@@ -11,6 +11,8 @@ function Dashboard() {
   const [predictions, setPredictions] = useState({});
   const [scores, setScores] = useState({});
   const [toast, setToast] = useState(null);
+  const awayInputRefs = useRef({});
+  const [now, setNow] = useState(new Date());
 
   const showToast = (message, type = "success") => {
     setToast({ message, type });
@@ -25,6 +27,13 @@ function Dashboard() {
     fetchMatches();
     fetchMyPredictions();
   }, []);
+  useEffect(() => {
+  const timer = setInterval(() => {
+    setNow(new Date());
+  }, 1000);
+
+  return () => clearInterval(timer);
+}, []);
 
   const fetchMatches = async () => {
     try {
@@ -167,6 +176,30 @@ const formatMatchTime = (kickoffTime) => {
   }) + " UTC";
 };
 
+
+const getCountdown = (kickoffTime) => {
+  const kickoff = parseUtcDate(kickoffTime);
+  const diff = kickoff - now;
+
+  if (diff <= 0) {
+    return "Started";
+  }
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  const minutes = Math.floor((diff / (1000 * 60)) % 60);
+  const seconds = Math.floor((diff / 1000) % 60);
+
+  if (days > 0) {
+    return `${days}d ${hours}h ${minutes}m`;
+  }
+
+  return `${hours}h ${minutes}m ${seconds}s`;
+};
+
+
+
+
   return (
     <div className="app-shell">
       <Navbar />
@@ -201,6 +234,24 @@ const formatMatchTime = (kickoffTime) => {
                 key={match.id}
                 className={`match-card ${disabled ? "disabled-match-card" : ""}`}
               >
+                <div
+  style={{
+    position: "absolute",
+    top: "18px",
+    right: "18px",
+    background: "linear-gradient(135deg,#ef4444,#f59e0b)",
+    color: "white",
+    padding: "9px 14px",
+    borderRadius: "999px",
+    fontWeight: "900",
+    fontSize: "14px",
+    boxShadow: "0 10px 30px rgba(239,68,68,0.35)",
+    border: "1px solid rgba(255,255,255,0.25)",
+    zIndex: 5
+  }}
+>
+  ⏳ {getCountdown(match.kickoff_time)}
+</div>
                 <div className="match-flags-bg">
                   <ReactCountryFlag
                     countryCode={teamFlags[match.home_team]}
@@ -349,29 +400,37 @@ const formatMatchTime = (kickoffTime) => {
                     <h3>Predict Score</h3>
 
                     <div className="score-row">
-                      <input
-                        disabled={disabled}
-                        type="number"
-                        min="0"
-                        placeholder={match.home_team}
-                        value={scores[`${match.id}_home`] ?? ""}
-                        onChange={(e) =>
-                          setScores({
-                            ...scores,
-                            [`${match.id}_home`]: Number(e.target.value)
-                          })
-                        }
-                        className="score-input"
-                      />
+<input
+  disabled={disabled}
+  type="number"
+  min="0"
+  placeholder={match.home_team}
+  value={scores[`${match.id}_home`] ?? ""}
+  onChange={(e) =>
+    setScores({
+      ...scores,
+      [`${match.id}_home`]: Number(e.target.value)
+    })
+  }
+  onKeyDown={(e) => {
+    if (e.key === "Enter") {
+      awayInputRefs.current[match.id]?.focus();
+    }
+  }}
+  className="score-input"
+/>
 
                       <strong>-</strong>
 
-                      <input
-                        disabled={disabled}
-                        type="number"
-                        min="0"
-                        placeholder={match.away_team}
-                        value={scores[`${match.id}_away`] ?? ""}
+<input
+  ref={(el) => {
+    awayInputRefs.current[match.id] = el;
+  }}
+  disabled={disabled}
+  type="number"
+  min="0"
+  placeholder={match.away_team}
+  value={scores[`${match.id}_away`] ?? ""}
                         onChange={(e) =>
                           setScores({
                             ...scores,
