@@ -33,6 +33,7 @@ function Admin() {
   const [showProfile, setShowProfile] = useState(false);
 
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [matchFilter, setMatchFilter] = useState("upcoming");
 
   const showToast = (message, type = "success") => {
     setToast({ message, type });
@@ -451,6 +452,25 @@ const formatUtcTime = (value) => {
       );
     }
   };
+
+  const getMatchCategory = (match) => {
+  const kickoff = new Date(match.kickoff_time.replace(" ", "T") + "Z");
+  const now = new Date();
+
+  if (match.status === "finished") {
+    return "finished";
+  }
+
+  if (now >= kickoff) {
+    return "awaiting";
+  }
+
+  return "upcoming";
+};
+
+const filteredMatches = matches.filter(
+  match => getMatchCategory(match) === matchFilter
+);
 
   return (
     <div>
@@ -977,9 +997,64 @@ const formatUtcTime = (value) => {
 
         <hr />
 
-        <h2>All Matches</h2>
+<h2>All Matches</h2>
 
-        {matches.map(match => {
+<div
+  style={{
+    display: "flex",
+    justifyContent: "center",
+    gap: "12px",
+    marginBottom: "25px",
+    flexWrap: "wrap"
+  }}
+>
+  <button
+    onClick={() => setMatchFilter("upcoming")}
+    style={{
+      padding: "10px 18px",
+      borderRadius: "10px",
+      border: "none",
+      cursor: "pointer",
+      background: matchFilter === "upcoming" ? "#3b82f6" : "#1f2937",
+      color: "white",
+      fontWeight: "bold"
+    }}
+  >
+    Upcoming
+  </button>
+
+  <button
+    onClick={() => setMatchFilter("awaiting")}
+    style={{
+      padding: "10px 18px",
+      borderRadius: "10px",
+      border: "none",
+      cursor: "pointer",
+      background: matchFilter === "awaiting" ? "#f59e0b" : "#1f2937",
+      color: "white",
+      fontWeight: "bold"
+    }}
+  >
+    Awaiting Result
+  </button>
+
+  <button
+    onClick={() => setMatchFilter("finished")}
+    style={{
+      padding: "10px 18px",
+      borderRadius: "10px",
+      border: "none",
+      cursor: "pointer",
+      background: matchFilter === "finished" ? "#22c55e" : "#1f2937",
+      color: "white",
+      fontWeight: "bold"
+    }}
+  >
+    Finished
+  </button>
+</div>
+
+{filteredMatches.map(match => {
           const time = formatUtcTime(match.kickoff_time);
 
           return (
