@@ -13,6 +13,8 @@ function Dashboard() {
   const [toast, setToast] = useState(null);
   const awayInputRefs = useRef({});
   const [now, setNow] = useState(new Date());
+  const [openedPredictionMatch, setOpenedPredictionMatch] = useState(null);
+const [matchPredictionList, setMatchPredictionList] = useState({});
 
   const showToast = (message, type = "success") => {
     setToast({ message, type });
@@ -197,7 +199,27 @@ const getCountdown = (kickoffTime) => {
   return `${hours}h ${minutes}m ${seconds}s`;
 };
 
+const viewMatchPredictions = async (matchId) => {
+  if (openedPredictionMatch === matchId) {
+    setOpenedPredictionMatch(null);
+    return;
+  }
 
+  try {
+    const response = await api.get(
+      `/football/match-predictions/${matchId}`
+    );
+
+    setMatchPredictionList({
+      ...matchPredictionList,
+      [matchId]: response.data.predictions
+    });
+
+    setOpenedPredictionMatch(matchId);
+  } catch (error) {
+    showToast("Failed to load predictions", "error");
+  }
+};
 
 
   return (
@@ -234,6 +256,102 @@ const getCountdown = (kickoffTime) => {
                 key={match.id}
                 className={`match-card ${disabled ? "disabled-match-card" : ""}`}
               >
+<div
+  style={{
+    position: "absolute",
+    top: "20px",
+    left: "20px",
+    zIndex: 50
+  }}
+>
+  <button
+    onClick={() => viewMatchPredictions(match.id)}
+    style={{
+      background: openedPredictionMatch === match.id
+        ? "linear-gradient(135deg,#ef4444,#f59e0b)"
+        : "linear-gradient(135deg,rgba(15,23,42,0.92),rgba(30,41,59,0.92))",
+      border: "1px solid rgba(255,255,255,0.22)",
+      color: "white",
+      borderRadius: "999px",
+      padding: "11px 18px",
+      cursor: "pointer",
+      fontWeight: "900",
+      fontSize: "14px",
+      backdropFilter: "blur(14px)",
+      boxShadow: openedPredictionMatch === match.id
+        ? "0 12px 35px rgba(239,68,68,0.35)"
+        : "0 10px 28px rgba(0,0,0,0.35)",
+      display: "flex",
+      alignItems: "center",
+      gap: "8px"
+    }}
+  >
+    👀 Predictions
+    <span style={{ fontSize: "12px", opacity: 0.85 }}>
+      {openedPredictionMatch === match.id ? "▲" : "▼"}
+    </span>
+  </button>
+
+{openedPredictionMatch === match.id && (
+  <div
+    style={{
+      position: "absolute",
+      top: "60px",
+      left: "0",
+
+      width: "380px",
+      maxHeight: "420px",
+
+      overflowY: "auto",
+      scrollbarWidth: "thin",
+
+      background: "rgba(15,23,42,0.97)",
+      border: "1px solid rgba(255,255,255,0.12)",
+
+      borderRadius: "20px",
+      padding: "18px",
+
+      backdropFilter: "blur(18px)",
+
+      boxShadow:
+        "0 30px 80px rgba(0,0,0,0.65)",
+
+      zIndex: 9999
+    }}
+  >
+      <h3 style={{ marginBottom: "14px", color: "white" }}>
+        👀 Match Predictions
+      </h3>
+
+      {matchPredictionList[match.id]?.length === 0 ? (
+        <p style={{ color: "#9CA3AF" }}>
+          No predictions yet.
+        </p>
+      ) : (
+        matchPredictionList[match.id]?.map((pred, index) => (
+          <div
+            key={index}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              gap: "12px",
+              padding: "10px 0",
+              borderBottom: "1px solid rgba(255,255,255,0.08)",
+              color: "white",
+              fontSize: "14px"
+            }}
+          >
+            <strong>{pred.name}</strong>
+
+            <span style={{ textAlign: "right" }}>
+              {pred.prediction} ({pred.home_score} - {pred.away_score})
+            </span>
+          </div>
+        ))
+      )}
+    </div>
+  )}
+</div>
                 <div
   style={{
     position: "absolute",
@@ -251,6 +369,8 @@ const getCountdown = (kickoffTime) => {
   }}
 >
   ⏳ {getCountdown(match.kickoff_time)}
+
+
 </div>
                 <div className="match-flags-bg">
                   <ReactCountryFlag

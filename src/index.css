@@ -147,7 +147,7 @@ code {
 
 .match-card {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   background: rgba(17, 24, 39, 0.92);
   border: 1px solid #263244;
   border-radius: 24px;

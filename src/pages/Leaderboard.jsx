@@ -10,6 +10,15 @@ function Leaderboard() {
   const currentUser = JSON.parse(
     localStorage.getItem("user") || "null"
   );
+  const currentUserIndex = users.findIndex(
+  user => Number(user.id) === Number(currentUser?.id)
+);
+
+const currentUserRank =
+  currentUserIndex >= 0 ? currentUserIndex + 1 : null;
+
+const currentLeaderboardUser =
+  currentUserIndex >= 0 ? users[currentUserIndex] : null;
 
   useEffect(() => {
     fetchLeaderboard();
@@ -48,7 +57,50 @@ function Leaderboard() {
           <h1>🏆 Leaderboard</h1>
 
         </section>
+{currentLeaderboardUser && (
+  <div
+    className="leaderboard-card"
+    style={{
+      position: "sticky",
+      top: "90px",
+      zIndex: 50,
+      marginBottom: "25px",
+      border: "2px solid #ef4444",
+      boxShadow: "0 20px 60px rgba(239,68,68,0.25)"
+    }}
+  >
+    <div className="rank-badge">
+      #{currentUserRank}
+    </div>
 
+    <div>
+      <div
+        className="leaderboard-name"
+        onClick={() => navigate(`/profile/${currentLeaderboardUser.id}`)}
+      >
+        {currentLeaderboardUser.name} · You
+      </div>
+
+      <div className="leaderboard-rank">
+        {getRankTitle(currentLeaderboardUser.points)}
+      </div>
+    </div>
+
+    <div className="leaderboard-stats">
+      <span className="leaderboard-pill">
+        ⭐ {currentLeaderboardUser.points} pts
+      </span>
+
+      <span className="leaderboard-pill">
+        ✅ {currentLeaderboardUser.correct_predictions} correct
+      </span>
+
+      <span className="leaderboard-pill">
+        🎯 {currentLeaderboardUser.perfect_scores} perfect
+      </span>
+    </div>
+  </div>
+)}
         <div className="leaderboard-list">
           {users.map((user, index) => (
             <div
