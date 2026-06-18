@@ -1126,16 +1126,17 @@ h2 {
     padding: 8px 12px;
   }
 
+ @media (max-width: 768px) {
   .match-prediction-panel {
     position: fixed;
-    top: 145px;
-    left: 12px;
-    right: 12px;
+    top: 170px;
+    left: 16px;
+    right: 16px;
     width: auto;
-    max-height: 60vh;
+    max-height: calc(100vh - 230px);
     z-index: 99999;
-    position: relative;
   }
+}
 
   .match-title {
     font-size: 28px !important;
@@ -1272,3 +1273,103 @@ h2 {
   font-weight: 900;
   cursor: pointer;
 }
+
+.match-prediction-panel {
+  position: absolute;
+  top: 72px;
+  left: 20px;
+  width: 380px;
+  max-height: 420px;
+  overflow-y: auto;
+  background: rgba(15, 23, 42, 0.97);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  padding: 0 18px 18px;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.65);
+  z-index: 9999;
+}
+
+.match-prediction-panel-header {
+  position: sticky;
+  top: 0;
+  background: rgba(15, 23, 42, 0.98);
+  padding: 16px 0 12px;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.match-prediction-panel-header h3 {
+  margin: 0;
+  color: white;
+}
+
+.prediction-close-btn {
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.match-prediction-panel {
+  position: absolute;
+  top: 70px;
+  left: 0;
+  width: 380px;
+  max-height: 420px;
+  overflow-y: auto;
+  background: rgba(15, 23, 42, 0.97);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  padding: 0 18px 18px;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.65);
+  z-index: 9999;
+}
+
+.prediction-panel-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(15, 23, 42, 0.98);
+  padding: 16px 0 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.prediction-panel-header h3 {
+  margin: 0;
+  color: white;
+}
+
+.prediction-close-btn {
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+@media (max-width: 768px) {
+  .match-prediction-panel {
+    position: fixed;
+    top: 170px;
+    left: 16px;
+    right: 16px;
+    width: auto;
+    max-height: calc(100vh - 250px);
+  }
+}
+

@@ -252,10 +252,16 @@ const viewMatchPredictions = async (matchId) => {
               !isOpen || submitted;
 
             return (
-              <div
-                key={match.id}
-                className={`match-card ${disabled ? "disabled-match-card" : ""}`}
-              >
+<div
+  key={match.id}
+  className={`match-card ${disabled ? "disabled-match-card" : ""}`}
+  style={{
+    marginBottom:
+      openedPredictionMatch === match.id
+        ? "450px"
+        : "0"
+  }}
+>
 <div className="match-prediction-dropdown">
   
   <button
@@ -291,16 +297,16 @@ const viewMatchPredictions = async (matchId) => {
 <div className="match-prediction-panel">
 
 <div className="prediction-panel-header">
+  <h3>
+    👀 Match Predictions
+  </h3>
+
   <button
     onClick={() => setOpenedPredictionMatch(null)}
     className="prediction-close-btn"
   >
     ✕
   </button>
-
-  <h3>
-    👀 Match Predictions
-  </h3>
 </div>
 
       {matchPredictionList[match.id]?.length === 0 ? (
