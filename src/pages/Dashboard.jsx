@@ -256,14 +256,8 @@ const viewMatchPredictions = async (matchId) => {
                 key={match.id}
                 className={`match-card ${disabled ? "disabled-match-card" : ""}`}
               >
-<div
-  style={{
-    position: "absolute",
-    top: "20px",
-    left: "20px",
-    zIndex: 50
-  }}
->
+<div className="match-prediction-dropdown">
+  
   <button
     onClick={() => viewMatchPredictions(match.id)}
     style={{
@@ -293,32 +287,9 @@ const viewMatchPredictions = async (matchId) => {
   </button>
 
 {openedPredictionMatch === match.id && (
-  <div
-    style={{
-      position: "absolute",
-      top: "60px",
-      left: "0",
 
-      width: "380px",
-      maxHeight: "420px",
+ <div className="match-prediction-panel">
 
-      overflowY: "auto",
-      scrollbarWidth: "thin",
-
-      background: "rgba(15,23,42,0.97)",
-      border: "1px solid rgba(255,255,255,0.12)",
-
-      borderRadius: "20px",
-      padding: "18px",
-
-      backdropFilter: "blur(18px)",
-
-      boxShadow:
-        "0 30px 80px rgba(0,0,0,0.65)",
-
-      zIndex: 9999
-    }}
-  >
       <h3 style={{ marginBottom: "14px", color: "white" }}>
         👀 Match Predictions
       </h3>
@@ -352,22 +323,9 @@ const viewMatchPredictions = async (matchId) => {
     </div>
   )}
 </div>
-                <div
-  style={{
-    position: "absolute",
-    top: "18px",
-    right: "18px",
-    background: "linear-gradient(135deg,#ef4444,#f59e0b)",
-    color: "white",
-    padding: "9px 14px",
-    borderRadius: "999px",
-    fontWeight: "900",
-    fontSize: "14px",
-    boxShadow: "0 10px 30px rgba(239,68,68,0.35)",
-    border: "1px solid rgba(255,255,255,0.25)",
-    zIndex: 5
-  }}
->
+
+ <div className="match-countdown-badge">
+
   ⏳ {getCountdown(match.kickoff_time)}
 
 

@@ -982,3 +982,176 @@ h2 {
   box-shadow: 0 2px 8px rgba(245,158,11,.4);
   pointer-events: none;
 }
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: 20px 14px;
+  }
+
+  .page-hero h1 {
+    font-size: 34px;
+    line-height: 1.1;
+  }
+
+  .page-hero h2 {
+    font-size: 22px;
+    line-height: 1.2;
+  }
+
+  .match-card {
+    padding: 22px 14px !important;
+    overflow: hidden;
+  }
+
+  .match-header {
+    text-align: center;
+  }
+
+  .match-title {
+    font-size: 32px !important;
+    line-height: 1.15;
+    text-align: center;
+    word-break: normal;
+    overflow-wrap: break-word;
+    margin-bottom: 14px;
+  }
+
+  .match-meta {
+    font-size: 17px;
+    line-height: 1.4;
+    margin-bottom: 18px;
+  }
+
+  .match-flags-bg {
+    opacity: 0.16;
+    justify-content: space-between;
+    padding: 0 8px;
+  }
+
+  .match-flags-bg svg {
+    width: 120px !important;
+    height: 120px !important;
+  }
+
+  .reward-row {
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .reward-pill {
+    font-size: 16px;
+    padding: 10px 14px;
+  }
+
+  .choice-row {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .choice-btn {
+    min-width: 95px;
+    padding: 12px 14px;
+  }
+
+  .score-row {
+    gap: 12px;
+  }
+
+  .score-input {
+    width: 130px;
+    max-width: 42%;
+    font-size: 24px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    max-width: 360px;
+  }
+}
+
+.match-prediction-dropdown {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 50;
+}
+
+.match-prediction-panel {
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 380px;
+  max-height: 420px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  background: rgba(15,23,42,0.97);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  padding: 18px;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.65);
+  z-index: 9999;
+}
+
+.match-countdown-badge {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: linear-gradient(135deg,#ef4444,#f59e0b);
+  color: white;
+  padding: 9px 14px;
+  border-radius: 999px;
+  font-weight: 900;
+  font-size: 14px;
+  box-shadow: 0 10px 30px rgba(239,68,68,0.35);
+  border: 1px solid rgba(255,255,255,0.25);
+  z-index: 5;
+}
+
+@media (max-width: 768px) {
+  .match-card {
+    padding-top: 92px !important;
+    overflow: hidden;
+  }
+
+  .match-prediction-dropdown {
+    top: 18px;
+    left: 14px;
+  }
+
+  .match-countdown-badge {
+    top: 18px;
+    right: 14px;
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  .match-prediction-panel {
+    position: fixed;
+    top: 145px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-height: 60vh;
+    z-index: 99999;
+  }
+
+  .match-title {
+    font-size: 28px !important;
+    line-height: 1.15;
+    padding: 0 6px;
+  }
+
+  .match-meta {
+    font-size: 15px;
+  }
+
+  .reward-row {
+    margin-top: 22px;
+  }
+
+  .predict-box {
+    max-width: 100%;
+  }
+}
