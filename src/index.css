@@ -1,50 +1,3 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
-
-
-
-body {
-  margin: 0;
-}
-
-#root {
-  width: 100%;
-  min-height: 100svh;
-  margin: 0;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
 
 h1,
 h2 {
@@ -655,19 +608,8 @@ code {
   text-align: left;
 }
 
-/* CSS */
-.page-hero {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Centers the content horizontally */
-  text-align: center;
-  gap: 12px; /* Controls the spacing between ALL elements inside */
-}
 
-/* Optional: If you want a larger gap before the paragraph than between the headings */
-.page-hero h2 {
-  margin-bottom: 8px; 
-}
+
 
 .prediction-grid {
   display: grid;
@@ -1077,21 +1019,7 @@ h2 {
   z-index: 50;
 }
 
-.match-prediction-panel {
-  position: absolute;
-  top: 60px;
-  left: 0;
-  width: 380px;
-  max-height: 420px;
-  overflow-y: auto;
-  background: rgba(15,23,42,0.97);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 20px;
-  padding: 0 18px 18px;
-  backdrop-filter: blur(18px);
-  box-shadow: 0 30px 80px rgba(0,0,0,0.65);
-  z-index: 9999;
-}
+
 
 .match-countdown-badge {
   position: absolute;
@@ -1126,17 +1054,7 @@ h2 {
     padding: 8px 12px;
   }
 
- @media (max-width: 768px) {
-  .match-prediction-panel {
-    position: fixed;
-    top: 170px;
-    left: 16px;
-    right: 16px;
-    width: auto;
-    max-height: calc(100vh - 230px);
-    z-index: 99999;
-  }
-}
+
 
   .match-title {
     font-size: 28px !important;
@@ -1218,9 +1136,17 @@ h2 {
   position: sticky;
   top: 0;
   z-index: 20;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 16px 20px;
+
   background: rgba(15,23,42,0.98);
-  padding: 18px 46px 14px 0;
   border-bottom: 1px solid rgba(255,255,255,0.08);
+
+  backdrop-filter: blur(12px);
 }
 
 .prediction-panel-header h3 {
@@ -1303,21 +1229,6 @@ h2 {
   z-index: 9999;
 }
 
-.prediction-panel-header {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  background: rgba(15, 23, 42, 0.98);
-  padding: 16px 0 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.prediction-panel-header h3 {
-  margin: 0;
-  color: white;
-}
 
 .prediction-close-btn {
   background: rgba(239, 68, 68, 0.18);

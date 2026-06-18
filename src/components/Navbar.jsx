@@ -21,10 +21,18 @@ useEffect(() => {
     );
   };
 
-  window.addEventListener("mh_notification_updated", updateNotification);
+  checkResultNotification();
+
+  window.addEventListener(
+    "mh_notification_updated",
+    updateNotification
+  );
 
   return () => {
-    window.removeEventListener("mh_notification_updated", updateNotification);
+    window.removeEventListener(
+      "mh_notification_updated",
+      updateNotification
+    );
   };
 }, []);
 
@@ -52,7 +60,83 @@ useEffect(() => {
 
     fetchFreshUser();
   }, []);
+const checkResultNotification = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) return;
 
+    const response = await api.get("/football/my-predictions", {
+      headers: { Authorization: token }
+    });
+
+    const predictions = response.data.predictions || [];
+
+    const seenResults = JSON.parse(
+      localStorage.getItem("mh_seen_results") || "[]"
+    );
+
+    const newFinishedPrediction = predictions.find(pred =>
+      pred.status === "finished" &&
+      pred.result &&
+      !seenResults.includes(Number(pred.match_id))
+    );
+
+    if (!newFinishedPrediction) return;
+
+    const isCorrect =
+      newFinishedPrediction.prediction === newFinishedPrediction.result;
+
+    const isPerfect =
+      isCorrect &&
+      Number(newFinishedPrediction.home_score) ===
+        Number(newFinishedPrediction.final_home_score) &&
+      Number(newFinishedPrediction.away_score) ===
+        Number(newFinishedPrediction.final_away_score);
+
+    const homeClose =
+      Math.abs(
+        Number(newFinishedPrediction.home_score) -
+        Number(newFinishedPrediction.final_home_score)
+      ) <= 1;
+
+    const awayClose =
+      Math.abs(
+        Number(newFinishedPrediction.away_score) -
+        Number(newFinishedPrediction.final_away_score)
+      ) <= 1;
+
+    const isClose =
+      isCorrect && !isPerfect && homeClose && awayClose;
+
+    let resultText = "Wrong prediction";
+
+    if (isPerfect) {
+      resultText = "Perfect score";
+    } else if (isClose) {
+      resultText = "Close score";
+    } else if (isCorrect) {
+      resultText = "Correct prediction";
+    }
+
+    const newNotification = {
+      matchId: Number(newFinishedPrediction.match_id),
+      message: `${newFinishedPrediction.home_team} ${newFinishedPrediction.final_home_score} - ${newFinishedPrediction.final_away_score} ${newFinishedPrediction.away_team}. Your prediction: ${resultText}.`
+    };
+
+    localStorage.setItem(
+      "mh_notification",
+      JSON.stringify(newNotification)
+    );
+
+    setNotification(newNotification);
+
+    window.dispatchEvent(
+      new Event("mh_notification_updated")
+    );
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 const logout = () => {
   localStorage.removeItem("token");
@@ -153,11 +237,29 @@ const logout = () => {
           </p>
 
           <button
-            onClick={() => {
-              localStorage.removeItem("mh_notification");
-              setNotification(null);
-              setShowNotification(false);
-            }}
+onClick={() => {
+
+  if (notification?.matchId) {
+    const seenResults = JSON.parse(
+      localStorage.getItem("mh_seen_results") || "[]"
+    );
+
+    localStorage.setItem(
+      "mh_seen_results",
+      JSON.stringify([
+        ...new Set([
+          ...seenResults,
+          notification.matchId
+        ])
+      ])
+    );
+  }
+
+  localStorage.removeItem("mh_notification");
+
+  setNotification(null);
+  setShowNotification(false);
+}}
             style={{
               width: "100%",
               padding: "8px",
@@ -219,11 +321,29 @@ const logout = () => {
             </p>
 
             <button
-              onClick={() => {
-                localStorage.removeItem("mh_notification");
-                setNotification(null);
-                setShowNotification(false);
-              }}
+onClick={() => {
+
+  if (notification?.matchId) {
+    const seenResults = JSON.parse(
+      localStorage.getItem("mh_seen_results") || "[]"
+    );
+
+    localStorage.setItem(
+      "mh_seen_results",
+      JSON.stringify([
+        ...new Set([
+          ...seenResults,
+          notification.matchId
+        ])
+      ])
+    );
+  }
+
+  localStorage.removeItem("mh_notification");
+
+  setNotification(null);
+  setShowNotification(false);
+}}
               style={{
                 width: "100%",
                 padding: "8px",
