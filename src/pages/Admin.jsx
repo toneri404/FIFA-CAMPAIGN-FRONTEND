@@ -372,6 +372,15 @@ const formatUtcTime = (value) => {
       );
 
       showToast("Result saved successfully", "success");
+      localStorage.setItem(
+  "mh_notification",
+  JSON.stringify({
+    message: "Leaderboard updated",
+    time: Date.now()
+  })
+);
+
+window.dispatchEvent(new Event("mh_notification_updated"));
 
       fetchMatches();
       fetchStats();
