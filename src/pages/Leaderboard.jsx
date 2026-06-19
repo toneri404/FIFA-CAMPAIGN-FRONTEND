@@ -74,7 +74,22 @@ function Leaderboard() {
                   onClick={() => navigate(`/profile/${user.id}`)}
                 >
                   {user.name}
-                  {currentUser?.id === user.id && " · You"}
+
+{currentUser?.id === user.id && (
+  <span
+    style={{
+      marginLeft: "10px",
+      background: "#22c55e",
+      color: "#ffffff",
+      padding: "4px 10px",
+      borderRadius: "999px",
+      fontSize: "12px",
+      fontWeight: "900"
+    }}
+  >
+     YOU
+  </span>
+)}
                 </div>
 
                 <div className="leaderboard-rank">
