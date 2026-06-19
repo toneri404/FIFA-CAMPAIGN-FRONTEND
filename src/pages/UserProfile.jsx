@@ -126,6 +126,85 @@ const fetchRank = async () => {
 
   }
 
+const getPredictionStatus = (pred) => {
+  const winnerPoints = pred.winner_points ?? 3;
+  const perfectPoints = pred.perfect_points ?? 5;
+  const closePoints = pred.close_points ?? 1;
+const isDrawPrediction = pred.prediction === "Draw";
+const baseWinnerPoints = isDrawPrediction
+  ? winnerPoints * 2
+  : winnerPoints;
+
+
+  if (!pred.result || pred.status !== "finished") {
+    return {
+  label: "Pending",
+  badge: "⏳ Pending",
+  color: "#a855f7",
+  bg: "linear-gradient(135deg, rgba(168,85,247,0.14), rgba(15,23,42,0.96))",
+  border: "rgba(168,85,247,0.45)",
+  points: 0
+};
+  }
+
+  const isCorrect = pred.prediction === pred.result;
+
+  if (!isCorrect) {
+    return {
+      label: "Loss",
+      badge: "❌ Wrong",
+      color: "#f87171",
+      bg: "rgba(239,68,68,0.12)",
+      border: "rgba(239,68,68,0.45)",
+      points: 0
+    };
+  }
+
+  const isPerfect =
+    Number(pred.home_score) === Number(pred.final_home_score) &&
+    Number(pred.away_score) === Number(pred.final_away_score);
+
+  const isClose =
+    !isPerfect &&
+    Math.abs(Number(pred.home_score) - Number(pred.final_home_score)) <= 1 &&
+    Math.abs(Number(pred.away_score) - Number(pred.final_away_score)) <= 1;
+
+  if (isPerfect) {
+    return {
+      label: "Win",
+      badge: "👑 Perfect Score",
+      color: "#facc15",
+      bg: "linear-gradient(135deg, rgba(250,204,21,0.20), rgba(15,23,42,0.96))",
+      border: "rgba(250,204,21,0.65)",
+      points: baseWinnerPoints + perfectPoints
+    };
+  }
+
+  if (isClose) {
+    return {
+      label: "Win",
+      badge: "⚡ Close Score",
+      color: "#38bdf8",
+      bg: "rgba(56,189,248,0.14)",
+      border: "rgba(56,189,248,0.5)",
+      points: baseWinnerPoints + closePoints
+    };
+  }
+
+  return {
+    label: "Win",
+    badge: "✅ Correct",
+    color: "#4ade80",
+    bg: "rgba(34,197,94,0.12)",
+    border: "rgba(34,197,94,0.45)",
+    points: baseWinnerPoints
+  };
+};
+
+
+
+
+
 return (
 
     <div>
@@ -143,75 +222,33 @@ return (
         <h1>
           👤 {user.name}
         </h1>
-        {
-  stats && (
+{stats && (
+  <section className="profile-card">
+    <h2 className="admin-section-title">📊 Statistics</h2>
 
-    <div
-      style={{
-        display:"grid",
-        gridTemplateColumns:
-          "repeat(auto-fit,minmax(180px,1fr))",
-        gap:"15px",
-        marginTop:"20px",
-        marginBottom:"20px"
-      }}
-    >
-
-      <div style={{
-        background:"#111827",
-        padding:"15px",
-        borderRadius:"12px"
-      }}>
-        <h3>🏆 Points</h3>
-        <h1>{user.points}</h1>
-      </div>
-
-      <div style={{
-        background:"#111827",
-        padding:"15px",
-        borderRadius:"12px"
-      }}>
-        <h3>🥇 Rank</h3>
-        <h1>#{rank}</h1>
-      </div>
-
-      <div style={{
-        background:"#111827",
-        padding:"15px",
-        borderRadius:"12px"
-      }}>
-        <h3>🎯 Predictions</h3>
-        <h1>
-          {stats.total_predictions}
-        </h1>
-      </div>
-
-      <div style={{
-        background:"#111827",
-        padding:"15px",
-        borderRadius:"12px"
-      }}>
-        <h3>✅ Correct</h3>
-        <h1>
-          {stats.correct_predictions || 0}
-        </h1>
-      </div>
-
-      <div style={{
-        background:"#111827",
-        padding:"15px",
-        borderRadius:"12px"
-      }}>
-        <h3>🎯 Perfect</h3>
-        <h1>
-          {stats.perfect_scores || 0}
-        </h1>
-      </div>
-
+    <div className="profile-stat-grid">
+      {[
+        ["🏆 Points", user.points, "#facc15", "rgba(250,204,21,0.12)"],
+        ["🥇 Rank", `#${rank}`, "#60a5fa", "rgba(96,165,250,0.12)"],
+        ["🎯 Predictions", stats.total_predictions || 0, "#a78bfa", "rgba(167,139,250,0.12)"],
+        ["✅ Correct", stats.correct_predictions || 0, "#4ade80", "rgba(74,222,128,0.12)"],
+        ["👑 Perfect", stats.perfect_scores || 0, "#facc15", "rgba(250,204,21,0.14)"]
+      ].map(([title, value, color, bg], index) => (
+        <div
+          key={index}
+          className="profile-stat"
+          style={{
+            background: `linear-gradient(135deg, ${bg}, #111827)`,
+            border: `1px solid ${color}`
+          }}
+        >
+          <h3>{title}</h3>
+          <strong style={{ color }}>{value}</strong>
+        </div>
+      ))}
     </div>
-
-  )
-}
+  </section>
+)}
 
         <p>
           🏆 Points:
@@ -242,52 +279,90 @@ return (
         </h2>
 
         {
-          predictions.map(pred => (
+          predictions.map(pred => {
+  const status = getPredictionStatus(pred);
 
-            <div
-              key={pred.id}
-              style={{
-                background:"#111827",
-                border:
-                  "1px solid #374151",
-                borderRadius:"12px",
-                padding:"15px",
-                marginBottom:"10px"
-              }}
-            >
+  return (
+    <div
+      key={pred.id}
+      style={{
+        background: status.bg,
+        border: `1px solid ${status.border}`,
+        borderLeft: `6px solid ${status.color}`,
+        borderRadius: "16px",
+        padding: "20px",
+        marginBottom: "16px",
+        boxShadow: "0 12px 35px rgba(0,0,0,0.18)"
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: "16px",
+          flexWrap: "wrap",
+          marginBottom: "16px"
+        }}
+      >
+        <h3
+          style={{
+            margin: 0,
+            textAlign: "left",
+            flex: 1
+          }}
+        >
+          {pred.home_team} vs {pred.away_team}
+        </h3>
 
-              <h3>
-                {pred.home_team}
-                {" vs "}
-                {pred.away_team}
-              </h3>
+        <span
+          style={{
+            background: status.color,
+            color: status.badge.includes("Perfect") ? "#111827" : "white",
+            padding: "8px 14px",
+            borderRadius: "999px",
+            fontWeight: "900",
+            whiteSpace: "nowrap"
+          }}
+        >
+          {status.badge}
+        </span>
+      </div>
 
-              <p>
-                Prediction:
-                {" "}
-                {pred.prediction}
-              </p>
+      <div style={{ textAlign: "left", lineHeight: "1.8" }}>
+        <p>
+          Prediction: <strong>{pred.prediction}</strong>
+        </p>
 
-              <p>
-                Score:
-                {" "}
-                {pred.home_score}
-                {" - "}
-                {pred.away_score}
-              </p>
+        <p>
+          Predicted Score:{" "}
+          <strong>{pred.home_score} - {pred.away_score}</strong>
+        </p>
 
-              <p>
-                Result:
-                {" "}
-                {
-                  pred.result ||
-                  "Pending"
-                }
-              </p>
+        <p>
+          Final Score:{" "}
+          <strong>
+            {pred.final_home_score !== null && pred.final_away_score !== null
+              ? `${pred.final_home_score} - ${pred.final_away_score}`
+              : "Pending"}
+          </strong>
+        </p>
 
-            </div>
+        <p style={{ color: status.color, fontWeight: "900" }}>
+          {status.label === "Win"
+            ? "🏆 Result: Win"
+            : status.label === "Loss"
+            ? "❌ Result: Loss"
+            : "⏳ Result: Pending"}
+        </p>
 
-          ))
+        <p style={{ fontWeight: "900", color: "#facc15" }}>
+          +{status.points} pts earned
+        </p>
+      </div>
+    </div>
+  );
+})
         }
 
       </div>

@@ -8,17 +8,17 @@ function Navbar() {
   );
 
   const [menuOpen, setMenuOpen] = useState(false);
-  const [notification, setNotification] = useState(
-  JSON.parse(localStorage.getItem("mh_notification") || "null")
+  const [notifications, setNotifications] = useState(
+  JSON.parse(localStorage.getItem("mh_notifications") || "[]")
 );
 
 const [showNotification, setShowNotification] = useState(false);
 
 useEffect(() => {
   const updateNotification = () => {
-    setNotification(
-      JSON.parse(localStorage.getItem("mh_notification") || "null")
-    );
+    setNotifications(
+  JSON.parse(localStorage.getItem("mh_notifications") || "[]")
+);
   };
 
   checkResultNotification();
@@ -75,13 +75,13 @@ const checkResultNotification = async () => {
       localStorage.getItem("mh_seen_results") || "[]"
     );
 
-    const newFinishedPrediction = predictions.find(pred =>
-      pred.status === "finished" &&
-      pred.result &&
-      !seenResults.includes(Number(pred.match_id))
-    );
+    const newFinishedPredictions = predictions.filter(pred =>
+  pred.status === "finished" &&
+  pred.result &&
+  !seenResults.includes(Number(pred.match_id))
+);
 
-    if (!newFinishedPrediction) return;
+if (newFinishedPredictions.length === 0) return;
 
     const isCorrect =
       newFinishedPrediction.prediction === newFinishedPrediction.result;
@@ -118,21 +118,43 @@ const checkResultNotification = async () => {
       resultText = "Correct prediction";
     }
 
-    const newNotification = {
-      matchId: Number(newFinishedPrediction.match_id),
-      message: `${newFinishedPrediction.home_team} ${newFinishedPrediction.final_home_score} - ${newFinishedPrediction.final_away_score} ${newFinishedPrediction.away_team}. Your prediction: ${resultText}.`
-    };
+    const newNotifications = newFinishedPredictions.map(pred => {
+  const isCorrect = pred.prediction === pred.result;
 
-    localStorage.setItem(
-      "mh_notification",
-      JSON.stringify(newNotification)
-    );
+  const isPerfect =
+    isCorrect &&
+    Number(pred.home_score) === Number(pred.final_home_score) &&
+    Number(pred.away_score) === Number(pred.final_away_score);
 
-    setNotification(newNotification);
+  const homeClose =
+    Math.abs(Number(pred.home_score) - Number(pred.final_home_score)) <= 1;
 
-    window.dispatchEvent(
-      new Event("mh_notification_updated")
-    );
+  const awayClose =
+    Math.abs(Number(pred.away_score) - Number(pred.final_away_score)) <= 1;
+
+  const isClose =
+    isCorrect && !isPerfect && homeClose && awayClose;
+
+  let resultText = "Wrong prediction";
+
+  if (isPerfect) resultText = "Perfect score";
+  else if (isClose) resultText = "Close score";
+  else if (isCorrect) resultText = "Correct prediction";
+
+  return {
+    matchId: Number(pred.match_id),
+    message: `${pred.home_team} ${pred.final_home_score} - ${pred.final_away_score} ${pred.away_team}. Your prediction: ${resultText}.`
+  };
+});
+
+localStorage.setItem(
+  "mh_notifications",
+  JSON.stringify(newNotifications)
+);
+
+setNotifications(newNotifications);
+
+window.dispatchEvent(new Event("mh_notification_updated"));
   } catch (error) {
     console.error(error);
   }
@@ -141,7 +163,7 @@ const checkResultNotification = async () => {
 const logout = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("user");
-  localStorage.removeItem("mh_notification");
+  localStorage.removeItem("mh_notifications");
   window.location.href = "/";
 };
 
@@ -196,7 +218,7 @@ const logout = () => {
   >
     🔔
 
-    {notification && (
+    {notifications.length > 0 && (
       <span
         style={{
           position: "absolute",
@@ -228,36 +250,55 @@ const logout = () => {
         boxShadow: "0 20px 60px rgba(0,0,0,0.45)"
       }}
     >
-      {notification ? (
+      {notifications.length > 0 ? (
         <>
-          <strong>{notification.message}</strong>
+          <div
+  style={{
+    maxHeight: "260px",
+    overflowY: "auto",
+    display: "grid",
+    gap: "10px",
+    marginBottom: "12px"
+  }}
+>
+  {notifications.map(item => (
+    <div
+      key={item.matchId}
+      style={{
+        paddingBottom: "10px",
+        borderBottom: "1px solid #374151"
+      }}
+    >
+      <strong>{item.message}</strong>
 
-          <p style={{ color: "#9CA3AF", margin: "6px 0 12px" }}>
-            Leaderboard updated recently
-          </p>
+      <p style={{ color: "#9CA3AF", margin: "6px 0 0" }}>
+        Leaderboard updated recently
+      </p>
+    </div>
+  ))}
+</div>
 
           <button
 onClick={() => {
+  const seenResults = JSON.parse(
+    localStorage.getItem("mh_seen_results") || "[]"
+  );
 
-  if (notification?.matchId) {
-    const seenResults = JSON.parse(
-      localStorage.getItem("mh_seen_results") || "[]"
-    );
+  const allMatchIds = notifications.map(item => item.matchId);
 
-    localStorage.setItem(
-      "mh_seen_results",
-      JSON.stringify([
-        ...new Set([
-          ...seenResults,
-          notification.matchId
-        ])
+  localStorage.setItem(
+    "mh_seen_results",
+    JSON.stringify([
+      ...new Set([
+        ...seenResults,
+        ...allMatchIds
       ])
-    );
-  }
+    ])
+  );
 
-  localStorage.removeItem("mh_notification");
+  localStorage.removeItem("mh_notifications");
 
-  setNotification(null);
+  setNotifications([]);
   setShowNotification(false);
 }}
             style={{
@@ -305,43 +346,62 @@ onClick={() => {
     >
       🔔
 
-      {notification && (
+      {notifications.length > 0 && (
         <span className="notification-dot" />
       )}
     </button>
 
     {showNotification && (
       <div className="mobile-notification-box">
-        {notification ? (
+        {notifications.length > 0 ? (
           <>
-            <strong>{notification.message}</strong>
+            <div
+  style={{
+    maxHeight: "260px",
+    overflowY: "auto",
+    display: "grid",
+    gap: "10px",
+    marginBottom: "12px"
+  }}
+>
+  {notifications.map(item => (
+    <div
+      key={item.matchId}
+      style={{
+        paddingBottom: "10px",
+        borderBottom: "1px solid #374151"
+      }}
+    >
+      <strong>{item.message}</strong>
 
-            <p style={{ color: "#9CA3AF", margin: "6px 0 12px" }}>
-              Leaderboard updated recently
-            </p>
+      <p style={{ color: "#9CA3AF", margin: "6px 0 0" }}>
+        Leaderboard updated recently
+      </p>
+    </div>
+  ))}
+</div>
 
             <button
 onClick={() => {
+  const seenResults = JSON.parse(
+    localStorage.getItem("mh_seen_results") || "[]"
+  );
 
-  if (notification?.matchId) {
-    const seenResults = JSON.parse(
-      localStorage.getItem("mh_seen_results") || "[]"
-    );
+  const allMatchIds = notifications.map(item => item.matchId);
 
-    localStorage.setItem(
-      "mh_seen_results",
-      JSON.stringify([
-        ...new Set([
-          ...seenResults,
-          notification.matchId
-        ])
+  localStorage.setItem(
+    "mh_seen_results",
+    JSON.stringify([
+      ...new Set([
+        ...seenResults,
+        ...allMatchIds
       ])
-    );
-  }
+    ])
+  );
 
-  localStorage.removeItem("mh_notification");
+  localStorage.removeItem("mh_notifications");
 
-  setNotification(null);
+  setNotifications([]);
   setShowNotification(false);
 }}
               style={{

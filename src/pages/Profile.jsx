@@ -65,43 +65,91 @@ function Profile() {
           </div>
         </section>
 
-        <section className="profile-card">
-          <h2 className="admin-section-title">
-            📊 Statistics
-          </h2>
+<section className="profile-card">
+  <h2 className="admin-section-title">
+    📊 Statistics
+  </h2>
 
-          <div className="profile-stat-grid">
-            <div className="profile-stat">
-              <h3>Predictions Made</h3>
-              <strong>{stats.predictions || 0}</strong>
-            </div>
+  <p style={{
+    color: "#9ca3af",
+    marginBottom: "24px",
+    textAlign: "center"
+  }}>
+    Accuracy is calculated from finished matches only.
+  </p>
 
-            <div className="profile-stat">
-              <h3>Correct Predictions</h3>
-              <strong>{stats.correct || 0}</strong>
-            </div>
+  <div className="profile-stat-grid">
+    {[
+      {
+        title: "Predictions Made",
+        value: stats.predictions || 0,
+        icon: "🎯",
+        color: "#60a5fa",
+        bg: "rgba(96,165,250,0.12)"
+      },
+      {
+        title: "Correct",
+        value: stats.correct || 0,
+        icon: "✅",
+        color: "#4ade80",
+        bg: "rgba(74,222,128,0.12)"
+      },
+      {
+        title: "Wrong",
+        value: stats.wrong || 0,
+        icon: "❌",
+        color: "#f87171",
+        bg: "rgba(248,113,113,0.12)"
+      },
+      {
+        title: "Pending",
+        value: stats.pending || 0,
+        icon: "⏳",
+        color: "#a78bfa",
+        bg: "rgba(167,139,250,0.12)"
+      },
+      {
+        title: "Perfect Scores",
+        value: stats.perfect || 0,
+        icon: "👑",
+        color: "#facc15",
+        bg: "rgba(250,204,21,0.14)"
+      },
+      {
+        title: "Close Scores",
+        value: stats.close || 0,
+        icon: "⚡",
+        color: "#38bdf8",
+        bg: "rgba(56,189,248,0.12)"
+      },
+      {
+        title: "Accuracy",
+        value: `${stats.accuracy || 0}%`,
+        icon: "📈",
+        color: "#fb7185",
+        bg: "rgba(251,113,133,0.12)"
+      }
+    ].map((item, index) => (
+      <div
+        key={index}
+        className="profile-stat"
+        style={{
+          background: `linear-gradient(135deg, ${item.bg}, #111827)`,
+          border: `1px solid ${item.color}`,
+          boxShadow: `0 18px 45px ${item.bg}`
+        }}
+      >
+        <h3 style={{ color: "#cbd5e1" }}>
+          {item.icon} {item.title}
+        </h3>
 
-            <div className="profile-stat">
-              <h3>Wrong Predictions</h3>
-              <strong>{stats.wrong || 0}</strong>
-            </div>
-
-            <div className="profile-stat">
-              <h3>Perfect Scores</h3>
-              <strong>{stats.perfect || 0}</strong>
-            </div>
-
-            <div className="profile-stat">
-              <h3>Close Scores</h3>
-              <strong>{stats.close || 0}</strong>
-            </div>
-
-            <div className="profile-stat">
-              <h3>Accuracy</h3>
-              <strong>{stats.accuracy || 0}%</strong>
-            </div>
-          </div>
-        </section>
+        <strong style={{ color: item.color }}>
+          {item.value}
+        </strong>
+      </div>
+    ))}
+  </div>
+</section>
 
         <section className="profile-card">
           <h2 className="admin-section-title">
