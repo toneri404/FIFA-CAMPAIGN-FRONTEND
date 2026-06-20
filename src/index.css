@@ -1244,25 +1244,18 @@ h2 {
 
 @media (max-width: 768px) {
   .match-prediction-panel {
-    position: fixed;
-    top: 170px;
-    left: 16px;
-    right: 16px;
-    width: auto;
-    max-height: calc(100vh - 250px);
-  }
-}
-
-@media (max-width: 768px) {
-  .match-prediction-panel {
     position: fixed !important;
-    top: 145px !important;
+    top: 120px !important;
     left: 12px !important;
     right: 12px !important;
+    bottom: 24px !important;
+
     width: auto !important;
-    max-height: 58vh !important;
+    max-height: none !important;
+    height: auto !important;
+
     overflow-y: auto !important;
-    padding: 0 16px 16px !important;
+    padding: 0 16px 18px !important;
     z-index: 99999 !important;
   }
 
