@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Navbar from "../components/Navbar";
@@ -10,11 +10,47 @@ function Leaderboard() {
   const currentUser = JSON.parse(
     localStorage.getItem("user") || "null"
   );
+  const isAdmin = currentUser?.role === "admin";
+  const currentUserIndex = users.findIndex(
+  user => Number(user.id) === Number(currentUser?.id)
+);
 
+const currentUserRank =
+  currentUserIndex >= 0 ? currentUserIndex + 1 : null;
+
+const currentLeaderboardUser =
+  currentUserIndex >= 0 ? users[currentUserIndex] : null;
+
+const actualUserRef = useRef(null);
+const [showStickyUser, setShowStickyUser] = useState(true);
+const shouldShowStickyUser =
+  !isAdmin &&
+  currentLeaderboardUser &&
+  currentUserRank > 1 &&
+  showStickyUser;
 
   useEffect(() => {
     fetchLeaderboard();
   }, []);
+
+useEffect(() => {
+  const target = actualUserRef.current;
+
+  if (!target) return;
+
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      setShowStickyUser(!entry.isIntersecting);
+    },
+    {
+      threshold: 0.4
+    }
+  );
+
+  observer.observe(target);
+
+  return () => observer.disconnect();
+}, [users, currentUserRank]);
 
   const fetchLeaderboard = async () => {
     try {
@@ -50,19 +86,80 @@ function Leaderboard() {
 
         </section>
 
+        {shouldShowStickyUser && (
+  <div
+    className="leaderboard-card current-user-card"
+    style={{
+      position: "sticky",
+      top: "90px",
+      zIndex: 100,
+      marginBottom: "18px"
+    }}
+  >
+    <div className="rank-badge">
+      #{currentUserRank}
+    </div>
+
+    <div>
+      <div
+        className="leaderboard-name"
+        onClick={() => navigate(`/profile/${currentLeaderboardUser.id}`)}
+      >
+        {currentLeaderboardUser.name}
+
+        <span
+          style={{
+            marginLeft: "10px",
+            background: "#22c55e",
+            color: "#ffffff",
+            padding: "4px 10px",
+            borderRadius: "999px",
+            fontSize: "12px",
+            fontWeight: "900"
+          }}
+        >
+          YOU
+        </span>
+      </div>
+
+      <div className="leaderboard-rank">
+        {getRankTitle(currentLeaderboardUser.points)}
+      </div>
+    </div>
+
+    <div className="leaderboard-stats">
+      <span className="leaderboard-pill">
+        ⭐ {currentLeaderboardUser.points} pts
+      </span>
+
+      <span className="leaderboard-pill">
+        ✅ {currentLeaderboardUser.correct_predictions} correct
+      </span>
+
+      <span className="leaderboard-pill">
+        🎯 {currentLeaderboardUser.perfect_scores} perfect
+      </span>
+    </div>
+  </div>
+)}
+
         <div className="leaderboard-list">
-          {users.map((user, index) => (
+{users.map((user, index) => (
+  <div key={user.id}>
             <div
-              key={user.id}
-              className={`leaderboard-card ${
-                index === 0
-                  ? "top-1"
-                  : index === 1
-                  ? "top-2"
-                  : index === 2
-                  ? "top-3"
-                  : ""
-              }`}
+            
+  ref={Number(currentUser?.id) === Number(user.id) ? actualUserRef : null}
+className={`leaderboard-card ${
+  Number(currentUser?.id) === Number(user.id)
+    ? "current-user-card"
+    : index === 0
+    ? "top-1"
+    : index === 1
+    ? "top-2"
+    : index === 2
+    ? "top-3"
+    : ""
+}`}
             >
               <div className="rank-badge">
                 {getRankIcon(index)}
@@ -75,7 +172,7 @@ function Leaderboard() {
                 >
                   {user.name}
 
-{currentUser?.id === user.id && (
+{Number(currentUser?.id) === Number(user.id) && (
   <span
     style={{
       marginLeft: "10px",
@@ -111,6 +208,8 @@ function Leaderboard() {
                 </span>
               </div>
             </div>
+
+</div>
           ))}
         </div>
       </main>

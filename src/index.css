@@ -1281,3 +1281,27 @@ h2 {
     right: 0 !important;
   }
 }
+
+.leaderboard-card.top-1 {
+  border-color: #facc15;
+  background: linear-gradient(135deg, rgba(250,204,21,0.18), #0f172a);
+  box-shadow: 0 20px 60px rgba(250,204,21,0.22);
+}
+
+.leaderboard-card.top-2 {
+  border-color: #cbd5e1;
+  background: linear-gradient(135deg, rgba(203,213,225,0.14), #0f172a);
+  box-shadow: 0 20px 60px rgba(203,213,225,0.16);
+}
+
+.leaderboard-card.top-3 {
+  border-color: #fb923c;
+  background: linear-gradient(135deg, rgba(251,146,60,0.16), #0f172a);
+  box-shadow: 0 20px 60px rgba(251,146,60,0.18);
+}
+
+.leaderboard-card.current-user-card {
+  border: 2px solid #22c55e;
+  background: linear-gradient(135deg, rgba(34,197,94,0.18), #0f172a);
+  box-shadow: 0 20px 60px rgba(34,197,94,0.25);
+}
