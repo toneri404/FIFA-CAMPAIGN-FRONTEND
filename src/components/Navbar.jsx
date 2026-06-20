@@ -83,40 +83,7 @@ const checkResultNotification = async () => {
 
 if (newFinishedPredictions.length === 0) return;
 
-    const isCorrect =
-      newFinishedPrediction.prediction === newFinishedPrediction.result;
 
-    const isPerfect =
-      isCorrect &&
-      Number(newFinishedPrediction.home_score) ===
-        Number(newFinishedPrediction.final_home_score) &&
-      Number(newFinishedPrediction.away_score) ===
-        Number(newFinishedPrediction.final_away_score);
-
-    const homeClose =
-      Math.abs(
-        Number(newFinishedPrediction.home_score) -
-        Number(newFinishedPrediction.final_home_score)
-      ) <= 1;
-
-    const awayClose =
-      Math.abs(
-        Number(newFinishedPrediction.away_score) -
-        Number(newFinishedPrediction.final_away_score)
-      ) <= 1;
-
-    const isClose =
-      isCorrect && !isPerfect && homeClose && awayClose;
-
-    let resultText = "Wrong prediction";
-
-    if (isPerfect) {
-      resultText = "Perfect score";
-    } else if (isClose) {
-      resultText = "Close score";
-    } else if (isCorrect) {
-      resultText = "Correct prediction";
-    }
 
     const newNotifications = newFinishedPredictions.map(pred => {
   const isCorrect = pred.prediction === pred.result;
@@ -147,12 +114,26 @@ if (newFinishedPredictions.length === 0) return;
   };
 });
 
-localStorage.setItem(
-  "mh_notifications",
-  JSON.stringify(newNotifications)
+const existingNotifications = JSON.parse(
+  localStorage.getItem("mh_notifications") || "[]"
 );
 
-setNotifications(newNotifications);
+const updatedNotifications = [
+  ...existingNotifications,
+  ...newNotifications
+].filter(
+  (item, index, self) =>
+    index === self.findIndex(
+      n => n.matchId === item.matchId
+    )
+);
+
+localStorage.setItem(
+  "mh_notifications",
+  JSON.stringify(updatedNotifications)
+);
+
+setNotifications(updatedNotifications);
 
 window.dispatchEvent(new Event("mh_notification_updated"));
   } catch (error) {
@@ -164,6 +145,7 @@ const logout = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("user");
   localStorage.removeItem("mh_notifications");
+  localStorage.removeItem("mh_seen_results");
   window.location.href = "/";
 };
 
