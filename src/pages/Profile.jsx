@@ -38,6 +38,30 @@ function Profile() {
     );
   }
 
+  const accuracy = Number(stats.accuracy || 0);
+
+const accuracyColor =
+  accuracy >= 80
+    ? "#facc15"
+    : accuracy >= 75
+    ? "#22c55e"
+    : accuracy >= 50
+    ? "#eab308"
+    : accuracy >= 30
+    ? "#f97316"
+    : "#ef4444";
+
+const accuracyBg =
+  accuracy >= 80
+    ? "rgba(250,204,21,0.14)"
+    : accuracy >= 75
+    ? "rgba(34,197,94,0.12)"
+    : accuracy >= 50
+    ? "rgba(234,179,8,0.12)"
+    : accuracy >= 30
+    ? "rgba(249,115,22,0.12)"
+    : "rgba(239,68,68,0.12)";
+
   return (
     <div className="app-shell">
       <Navbar />
@@ -123,21 +147,23 @@ function Profile() {
         bg: "rgba(56,189,248,0.12)"
       },
       {
-        title: "Accuracy",
-        value: `${stats.accuracy || 0}%`,
-        icon: "📈",
-        color: "#fb7185",
-        bg: "rgba(251,113,133,0.12)"
-      }
+  title: "Accuracy",
+  value: `${stats.accuracy || 0}%`,
+  icon: "📈",
+  color: accuracyColor,
+  bg: accuracyBg,
+  wide: true
+}
     ].map((item, index) => (
       <div
         key={index}
         className="profile-stat"
         style={{
-          background: `linear-gradient(135deg, ${item.bg}, #111827)`,
-          border: `1px solid ${item.color}`,
-          boxShadow: `0 18px 45px ${item.bg}`
-        }}
+  background: `linear-gradient(135deg, ${item.bg}, #111827)`,
+  border: `1px solid ${item.color}`,
+  boxShadow: `0 18px 45px ${item.bg}`,
+  gridColumn: item.wide ? "span 2" : "auto"
+}}
       >
         <h3 style={{ color: "#cbd5e1" }}>
           {item.icon} {item.title}
@@ -146,6 +172,26 @@ function Profile() {
         <strong style={{ color: item.color }}>
           {item.value}
         </strong>
+        {item.title === "Accuracy" && (
+  <div
+    style={{
+      marginTop: "8px",
+      fontSize: "13px",
+      fontWeight: "800",
+      color: item.color
+    }}
+  >
+    {accuracy >= 80
+      ? "👑 Elite"
+      : accuracy >= 75
+      ? "🔥 Excellent"
+      : accuracy >= 50
+      ? "⭐ Good"
+      : accuracy >= 30
+      ? "⚡ Average"
+      : "📉 Needs Work"}
+  </div>
+)}
       </div>
     ))}
   </div>

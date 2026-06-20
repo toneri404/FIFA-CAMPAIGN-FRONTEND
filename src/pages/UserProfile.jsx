@@ -200,7 +200,29 @@ const baseWinnerPoints = isDrawPrediction
     points: baseWinnerPoints
   };
 };
+const accuracy = Number(stats?.accuracy || 0);
 
+const accuracyColor =
+  accuracy >= 80
+    ? "#facc15"
+    : accuracy >= 75
+    ? "#22c55e"
+    : accuracy >= 50
+    ? "#eab308"
+    : accuracy >= 30
+    ? "#f97316"
+    : "#ef4444";
+
+const accuracyBg =
+  accuracy >= 80
+    ? "rgba(250,204,21,0.14)"
+    : accuracy >= 75
+    ? "rgba(34,197,94,0.12)"
+    : accuracy >= 50
+    ? "rgba(234,179,8,0.12)"
+    : accuracy >= 30
+    ? "rgba(249,115,22,0.12)"
+    : "rgba(239,68,68,0.12)";
 
 
 
@@ -228,22 +250,46 @@ return (
 
     <div className="profile-stat-grid">
       {[
-        ["🏆 Points", user.points, "#facc15", "rgba(250,204,21,0.12)"],
-        ["🥇 Rank", `#${rank}`, "#60a5fa", "rgba(96,165,250,0.12)"],
-        ["🎯 Predictions", stats.total_predictions || 0, "#a78bfa", "rgba(167,139,250,0.12)"],
-        ["✅ Correct", stats.correct_predictions || 0, "#4ade80", "rgba(74,222,128,0.12)"],
-        ["👑 Perfect", stats.perfect_scores || 0, "#facc15", "rgba(250,204,21,0.14)"]
-      ].map(([title, value, color, bg], index) => (
+  ["🏆 Points", user.points, "#facc15", "rgba(250,204,21,0.12)"],
+  ["🥇 Rank", `#${rank}`, "#60a5fa", "rgba(96,165,250,0.12)"],
+  ["🎯 Predictions", stats.total_predictions || 0, "#a78bfa", "rgba(167,139,250,0.12)"],
+  ["✅ Correct", stats.correct_predictions || 0, "#4ade80", "rgba(74,222,128,0.12)"],
+  ["⚡ Close", stats.close_scores || 0, "#38bdf8", "rgba(56,189,248,0.12)"],
+  ["👑 Perfect", stats.perfect_scores || 0, "#facc15", "rgba(250,204,21,0.14)"],
+  ["⏳ Pending", stats.pending_predictions || 0, "#a855f7", "rgba(168,85,247,0.12)"],
+  ["📈 Accuracy", `${stats.accuracy || 0}%`, accuracyColor, accuracyBg, true]
+].map(([title, value, color, bg, wide], index) => (
         <div
           key={index}
           className="profile-stat"
           style={{
             background: `linear-gradient(135deg, ${bg}, #111827)`,
-            border: `1px solid ${color}`
+            border: `1px solid ${color}`,
+            
           }}
         >
           <h3>{title}</h3>
           <strong style={{ color }}>{value}</strong>
+          {title.includes("Accuracy") && (
+  <div
+    style={{
+      marginTop: "8px",
+      fontSize: "13px",
+      fontWeight: "900",
+      color
+    }}
+  >
+    {accuracy >= 80
+      ? "👑 Elite"
+      : accuracy >= 75
+      ? "🔥 Excellent"
+      : accuracy >= 50
+      ? "⭐ Good"
+      : accuracy >= 30
+      ? "⚡ Average"
+      : "📉 Needs Work"}
+  </div>
+)}
         </div>
       ))}
     </div>
@@ -281,6 +327,7 @@ return (
         {
           predictions.map(pred => {
   const status = getPredictionStatus(pred);
+
 
   return (
     <div

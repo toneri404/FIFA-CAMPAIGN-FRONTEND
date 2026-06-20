@@ -569,8 +569,20 @@ code {
 
 .profile-stat-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(4, minmax(180px, 1fr));
+  gap: 18px;
+}
+
+@media (max-width: 1100px) {
+  .profile-stat-grid {
+    grid-template-columns: repeat(3, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .profile-stat-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .profile-stat {
@@ -1302,4 +1314,10 @@ h2 {
 .mobile-notification-box{
   max-height:70vh;
   overflow-y:auto;
+}
+
+@media (max-width: 700px) {
+  .profile-stat[style] {
+    grid-column: auto !important;
+  }
 }
