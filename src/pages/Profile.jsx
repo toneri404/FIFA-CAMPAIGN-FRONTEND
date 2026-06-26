@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
 import Navbar from "../components/Navbar";
+import { generateProfileCard } from "../utils/generateProfileCard";
 
 function Profile() {
   const [user, setUser] = useState(null);
@@ -42,92 +43,9 @@ const getProfileImageUrl = (image) => {
   return `https://backend.minershub.online/fifa${image}`;
 };
 
-const loadImage = (src) => {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = () => resolve(img);
-    img.onerror = reject;
-    img.src = src;
-  });
-};
 
-const generateProfileCard = async () => {
-  try {
-    setShareLoading(true);
 
-    const canvas = document.createElement("canvas");
-    canvas.width = 1600;
-    canvas.height = 900;
 
-    const ctx = canvas.getContext("2d");
-
-    const template = await loadImage("/profile-card-template.png");
-    ctx.drawImage(template, 0, 0, canvas.width, canvas.height);
-
-    const profileImage = getProfileImageUrl(user.profile_image);
-
-    if (profileImage) {
-      const avatar = await loadImage(profileImage);
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(160, 282, 76, 0, Math.PI * 2);
-      ctx.closePath();
-      ctx.clip();
-
-      ctx.drawImage(avatar, 84, 206, 152, 152);
-      ctx.restore();
-    } else {
-      ctx.fillStyle = "#ef4444";
-      ctx.beginPath();
-      ctx.arc(160, 282, 76, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = "white";
-      ctx.font = "900 76px Arial";
-      ctx.textAlign = "center";
-      ctx.fillText(user.name[0].toUpperCase(), 160, 310);
-    }
-
-    ctx.textAlign = "left";
-
-    ctx.fillStyle = "white";
-    ctx.font = "900 62px Arial";
-    ctx.fillText(user.name, 260, 265);
-
-    ctx.fillStyle = "white";
-    ctx.font = "700 24px Arial";
-    ctx.fillText(`RANK #${stats.rank || "?"}`, 292, 342);
-
-    ctx.fillStyle = "#f43f5e";
-    ctx.font = "900 96px Arial";
-    ctx.fillText(`${stats.accuracy || 0}%`, 160, 565);
-
-    ctx.fillStyle = "white";
-    ctx.font = "900 96px Arial";
-    ctx.fillText(`${stats.close || 0}`, 545, 565);
-
-    ctx.fillStyle = "white";
-    ctx.font = "900 96px Arial";
-    ctx.fillText(`${stats.perfect || 0}`, 160, 770);
-
-    ctx.fillStyle = "white";
-    ctx.font = "900 96px Arial";
-    ctx.fillText(`${user.points || 0}`, 545, 770);
-
-    const link = document.createElement("a");
-    link.download = `${user.name}-profile-card.png`;
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-
-  } catch (error) {
-    console.error(error);
-    alert("Failed to generate profile card.");
-  } finally {
-    setShareLoading(false);
-  }
-};
 
 
 const uploadProfileImage = async (event) => {
@@ -192,6 +110,23 @@ const uploadProfileImage = async (event) => {
 };
 
 
+const handleGenerateProfileCard = async () => {
+  try {
+    setShareLoading(true);
+
+    await generateProfileCard({
+      user,
+      stats,
+      rank,
+      totalPlayers: stats.totalPlayers || 50
+    });
+  } catch (error) {
+    console.error(error);
+    alert("Failed to generate profile card.");
+  } finally {
+    setShareLoading(false);
+  }
+};
 
 
   if (!user) {
@@ -298,7 +233,7 @@ const accuracyBg =
               </div>
 
               <button
-  onClick={generateProfileCard}
+  onClick={handleGenerateProfileCard}
   disabled={shareLoading}
   style={{
     marginTop: "14px",
