@@ -505,14 +505,65 @@ code {
 
 @media (max-width: 700px) {
   .leaderboard-card {
-    grid-template-columns: 1fr;
+    grid-template-columns: 58px 1fr;
+    align-items: center;
+    padding: 18px 16px;
+    gap: 14px;
+    text-align: left;
+  }
+
+  .rank-badge {
+    font-size: 32px;
     text-align: center;
   }
 
+  .leaderboard-name {
+    font-size: 26px;
+    line-height: 1.1;
+  }
+
+  .leaderboard-rank {
+    font-size: 18px;
+    margin-top: 4px;
+  }
+
   .leaderboard-stats {
-    justify-content: center;
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .leaderboard-pill {
+    font-size: 15px;
+    padding: 8px 12px;
   }
 }
+
+.leaderboard-user-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+}
+
+@media (max-width: 700px) {
+  .leaderboard-user-info {
+    justify-content: flex-start;
+    min-width: 0;
+  }
+
+  .leaderboard-user-info > div:last-child {
+    min-width: 0;
+  }
+
+  .leaderboard-name {
+    word-break: break-word;
+  }
+}
+
+
+
 .profile-card {
   background: #0f172a;
   border: 1px solid #334155;
@@ -1319,5 +1370,12 @@ h2 {
 @media (max-width: 700px) {
   .profile-stat[style] {
     grid-column: auto !important;
+  }
+}
+@media (max-width: 700px) {
+  .leaderboard-avatar {
+    width: 64px !important;
+    height: 64px !important;
+    border-radius: 18px !important;
   }
 }

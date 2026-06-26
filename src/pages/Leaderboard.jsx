@@ -89,6 +89,7 @@ useEffect(() => {
 
 const LeaderboardAvatar = ({ user }) => (
   <div
+    className="leaderboard-avatar"
     style={{
       width: "52px",
       height: "52px",
@@ -120,6 +121,7 @@ const LeaderboardAvatar = ({ user }) => (
   </div>
 );
 
+
   return (
     <div className="app-shell">
       <Navbar />
@@ -144,14 +146,8 @@ const LeaderboardAvatar = ({ user }) => (
       #{currentUserRank}
     </div>
 
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "14px",
-        flex: 1
-      }}
-    >
+   <div className="leaderboard-user-info">
+
       <LeaderboardAvatar user={currentLeaderboardUser} />
 
       <div>
@@ -225,14 +221,8 @@ const LeaderboardAvatar = ({ user }) => (
         {getRankIcon(index)}
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "14px",
-          flex: 1
-        }}
-      >
+      <div className="leaderboard-user-info">
+
         <LeaderboardAvatar user={user} />
 
         <div>
