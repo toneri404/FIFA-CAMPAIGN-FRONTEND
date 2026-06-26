@@ -1379,3 +1379,27 @@ h2 {
     border-radius: 18px !important;
   }
 }
+@media (max-width: 768px) {
+  .profile-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+  }
+
+  .profile-name {
+    text-align: center;
+    width: 100%;
+  }
+
+  .profile-email,
+  .profile-points {
+    text-align: center;
+  }
+
+  .profile-header > div:last-child {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}

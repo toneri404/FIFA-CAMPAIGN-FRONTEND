@@ -53,10 +53,10 @@ const uploadProfileImage = async (event) => {
 
   if (!file) return;
 
-  if (file.size > 300 * 1024) {
-    setImageError("Image must be under 300KB");
-    return;
-  }
+if (file.size > 400 * 1024) {
+  setImageError("Image must be under 400KB");
+  return;
+}
 
   const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
 
