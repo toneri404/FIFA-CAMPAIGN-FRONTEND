@@ -76,6 +76,50 @@ useEffect(() => {
     return `#${index + 1}`;
   };
 
+  const getProfileImageUrl = (image) => {
+  if (!image) return null;
+
+  if (image.startsWith("http")) {
+    return image;
+  }
+
+  return `https://backend.minershub.online/fifa${image}`;
+};
+
+
+const LeaderboardAvatar = ({ user }) => (
+  <div
+    style={{
+      width: "52px",
+      height: "52px",
+      borderRadius: "16px",
+      overflow: "hidden",
+      background: "linear-gradient(135deg, #ef4444, #991b1b)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      color: "white",
+      fontWeight: "900",
+      fontSize: "22px",
+      flexShrink: 0
+    }}
+  >
+    {getProfileImageUrl(user.profile_image) ? (
+      <img
+        src={getProfileImageUrl(user.profile_image)}
+        alt={user.name}
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover"
+        }}
+      />
+    ) : (
+      user.name[0].toUpperCase()
+    )}
+  </div>
+);
+
   return (
     <div className="app-shell">
       <Navbar />
@@ -86,7 +130,7 @@ useEffect(() => {
 
         </section>
 
-        {shouldShowStickyUser && (
+{shouldShowStickyUser && (
   <div
     className="leaderboard-card current-user-card"
     style={{
@@ -100,30 +144,43 @@ useEffect(() => {
       #{currentUserRank}
     </div>
 
-    <div>
-      <div
-        className="leaderboard-name"
-        onClick={() => navigate(`/profile/${currentLeaderboardUser.id}`)}
-      >
-        {currentLeaderboardUser.name}
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "14px",
+        flex: 1
+      }}
+    >
+      <LeaderboardAvatar user={currentLeaderboardUser} />
 
-        <span
-          style={{
-            marginLeft: "10px",
-            background: "#22c55e",
-            color: "#ffffff",
-            padding: "4px 10px",
-            borderRadius: "999px",
-            fontSize: "12px",
-            fontWeight: "900"
-          }}
+      <div>
+        <div
+          className="leaderboard-name"
+          onClick={() =>
+            navigate(`/profile/${currentLeaderboardUser.id}`)
+          }
         >
-          YOU
-        </span>
-      </div>
+          {currentLeaderboardUser.name}
 
-      <div className="leaderboard-rank">
-        {getRankTitle(currentLeaderboardUser.points)}
+          <span
+            style={{
+              marginLeft: "10px",
+              background: "#22c55e",
+              color: "#fff",
+              padding: "4px 10px",
+              borderRadius: "999px",
+              fontSize: "12px",
+              fontWeight: "900"
+            }}
+          >
+            YOU
+          </span>
+        </div>
+
+        <div className="leaderboard-rank">
+          {getRankTitle(currentLeaderboardUser.points)}
+        </div>
       </div>
     </div>
 
@@ -146,71 +203,84 @@ useEffect(() => {
         <div className="leaderboard-list">
 {users.map((user, index) => (
   <div key={user.id}>
-            <div
-            
-  ref={Number(currentUser?.id) === Number(user.id) ? actualUserRef : null}
-className={`leaderboard-card ${
-  Number(currentUser?.id) === Number(user.id)
-    ? "current-user-card"
-    : index === 0
-    ? "top-1"
-    : index === 1
-    ? "top-2"
-    : index === 2
-    ? "top-3"
-    : ""
-}`}
-            >
-              <div className="rank-badge">
-                {getRankIcon(index)}
-              </div>
+    <div
+      ref={
+        Number(currentUser?.id) === Number(user.id)
+          ? actualUserRef
+          : null
+      }
+      className={`leaderboard-card ${
+        Number(currentUser?.id) === Number(user.id)
+          ? "current-user-card"
+          : index === 0
+          ? "top-1"
+          : index === 1
+          ? "top-2"
+          : index === 2
+          ? "top-3"
+          : ""
+      }`}
+    >
+      <div className="rank-badge">
+        {getRankIcon(index)}
+      </div>
 
-              <div>
-                <div
-                  className="leaderboard-name"
-                  onClick={() => navigate(`/profile/${user.id}`)}
-                >
-                  {user.name}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "14px",
+          flex: 1
+        }}
+      >
+        <LeaderboardAvatar user={user} />
 
-{Number(currentUser?.id) === Number(user.id) && (
-  <span
-    style={{
-      marginLeft: "10px",
-      background: "#22c55e",
-      color: "#ffffff",
-      padding: "4px 10px",
-      borderRadius: "999px",
-      fontSize: "12px",
-      fontWeight: "900"
-    }}
-  >
-     YOU
-  </span>
-)}
-                </div>
+        <div>
+          <div
+            className="leaderboard-name"
+            onClick={() => navigate(`/profile/${user.id}`)}
+          >
+            {user.name}
 
-                <div className="leaderboard-rank">
-                  {getRankTitle(user.points)}
-                </div>
-              </div>
+            {Number(currentUser?.id) === Number(user.id) && (
+              <span
+                style={{
+                  marginLeft: "10px",
+                  background: "#22c55e",
+                  color: "#fff",
+                  padding: "4px 10px",
+                  borderRadius: "999px",
+                  fontSize: "12px",
+                  fontWeight: "900"
+                }}
+              >
+                YOU
+              </span>
+            )}
+          </div>
 
-              <div className="leaderboard-stats">
-                <span className="leaderboard-pill">
-                  ⭐ {user.points} pts
-                </span>
+          <div className="leaderboard-rank">
+            {getRankTitle(user.points)}
+          </div>
+        </div>
+      </div>
 
-                <span className="leaderboard-pill">
-                  ✅ {user.correct_predictions} correct
-                </span>
+      <div className="leaderboard-stats">
+        <span className="leaderboard-pill">
+          ⭐ {user.points} pts
+        </span>
 
-                <span className="leaderboard-pill">
-                  🎯 {user.perfect_scores} perfect
-                </span>
-              </div>
-            </div>
+        <span className="leaderboard-pill">
+          ✅ {user.correct_predictions} correct
+        </span>
 
-</div>
-          ))}
+        <span className="leaderboard-pill">
+          🎯 {user.perfect_scores} perfect
+        </span>
+      </div>
+    </div>
+  </div>
+))}
         </div>
       </main>
     </div>

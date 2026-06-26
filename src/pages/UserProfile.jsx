@@ -106,6 +106,20 @@ const fetchRank = async () => {
 
 };
 
+
+
+const getProfileImageUrl = (image) => {
+  if (!image) return null;
+
+  if (image.startsWith("http")) {
+    return image;
+  }
+
+  return `https://backend.minershub.online/fifa${image}`;
+};
+
+
+
   useEffect(() => {
 
     fetchUser();
@@ -241,9 +255,37 @@ return (
         }}
       >
 
-        <h1>
-          👤 {user.name}
-        </h1>
+<section className="profile-card">
+  <div className="profile-header">
+    <div className="profile-avatar" style={{ overflow: "hidden" }}>
+      {getProfileImageUrl(user.profile_image) ? (
+        <img
+          src={getProfileImageUrl(user.profile_image)}
+          alt={user.name}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover"
+          }}
+        />
+      ) : (
+        user.name[0].toUpperCase()
+      )}
+    </div>
+
+    <div>
+      <div className="profile-name">
+        {user.name}
+      </div>
+
+      <div className="profile-points">
+        🏆 {user.points} Points
+      </div>
+    </div>
+  </div>
+</section>
+
+
 {stats && (
   <section className="profile-card">
     <h2 className="admin-section-title">📊 Statistics</h2>
